@@ -288,8 +288,8 @@
       '.footer .content-2 {',
       '  max-width: 100% !important;',
       '  width: 100% !important;',
-      '  padding-left: 16px !important;',
-      '  padding-right: 16px !important;',
+      '  padding-left: 40px !important;',
+      '  padding-right: 40px !important;',
       '}',
       // Layout del footer: GRID full-width
       '.footer .grid-footer {',
@@ -629,6 +629,16 @@
       floatingBtn.setAttribute('rel', 'noopener');
       log('floating WhatsApp button href fixed');
     }
+    // Asegurar que el contenedor flotante esta por encima de todo
+    injectCSS('maquinasa-floating-wa', [
+      '.div-block-108 {',
+      '  z-index: 9999 !important;',
+      '  position: fixed !important;',
+      '}',
+      '.div-block-108 > a {',
+      '  display: block;',
+      '}'
+    ].join('\n'));
   }
 
   // =====================================================================
