@@ -283,13 +283,12 @@
       '  padding-left: 0 !important;',
       '  padding-right: 0 !important;',
       '}',
-      // CRITICO: el template envuelve el grid en .content-2 con max-width
-      // 1310px y padding 40+29. Lo anulamos para que el grid use TODO el ancho.
+      // CRITICO: anular .content-2 max-width 1310 + padding del template
       '.footer .content-2 {',
       '  max-width: 100% !important;',
       '  width: 100% !important;',
-      '  padding-left: 40px !important;',
-      '  padding-right: 40px !important;',
+      '  padding-left: 90px !important;',
+      '  padding-right: 90px !important;',
       '}',
       // Layout del footer: GRID full-width
       '.footer .grid-footer {',
@@ -302,19 +301,19 @@
       '  box-sizing: border-box !important;',
       '  align-items: start !important;',
       '}',
-      // Desktop grande (>=1400): 6 cols en una fila
-      '@media (min-width: 1400px) {',
+      // Desktop grande (>=1500): 6 cols en una fila
+      '@media (min-width: 1500px) {',
       '  .footer .grid-footer {',
-      '    grid-template-columns: 200px repeat(5, minmax(220px, 1fr)) !important;',
-      '    gap: 50px 30px !important;',
+      '    grid-template-columns: 200px repeat(5, minmax(200px, 1fr)) !important;',
+      '    gap: 50px 22px !important;',
       '  }',
       '}',
-      // Desktop normal (1200-1399): 3+3 (logo + 5 cols se reparten en 2 filas)
-      '@media (min-width: 1200px) and (max-width: 1399px) {',
+      // Desktop normal (1100-1499): 3 cols, logo span entero arriba
+      '@media (min-width: 1100px) and (max-width: 1499px) {',
       '  .footer .grid-footer {',
-      '    grid-template-columns: repeat(3, minmax(230px, 1fr)) !important;',
-      '    gap: 50px 30px !important;',
-      '    max-width: 1100px !important;',
+      '    grid-template-columns: repeat(3, minmax(220px, 1fr)) !important;',
+      '    gap: 50px 22px !important;',
+      '    max-width: 950px !important;',
       '    margin-left: auto !important;',
       '    margin-right: auto !important;',
       '  }',
