@@ -278,26 +278,28 @@
       '    width: auto !important;',
       '  }',
       '}',
-      // Layout del footer: forzar grid-footer a flex centrado
+      // Layout del footer: flex centrado, max 1300px, gap reducido
       '.footer .grid-footer {',
       '  display: flex !important;',
-      '  flex-wrap: wrap;',
+      '  flex-wrap: wrap !important;',
       '  justify-content: center !important;',
       '  align-items: flex-start !important;',
-      '  gap: 40px !important;',
+      '  gap: 50px 30px !important;',
       '  text-align: center !important;',
+      '  max-width: 1300px !important;',
+      '  margin: 0 auto 30px auto !important;',
       '}',
       '.footer .grid-footer > * {',
       '  grid-column: auto !important;',
       '  grid-row: auto !important;',
-      '  max-width: none !important;',
-      '  margin-left: 0 !important;',
-      '  margin-right: 0 !important;',
+      '  max-width: 180px !important;',
+      '  flex: 0 1 160px !important;',
+      '  margin: 0 !important;',
       '}',
-      // El contenedor .div-block-107 tenia max-width:300px y margin-left:65px
+      // El bloque del logo es mas ancho que las columnas de info
       '.footer .div-block-107 {',
-      '  max-width: none !important;',
-      '  margin-left: 0 !important;',
+      '  max-width: 280px !important;',
+      '  flex: 0 1 280px !important;',
       '  display: flex !important;',
       '  flex-direction: column;',
       '  align-items: center !important;',
@@ -305,10 +307,24 @@
       '.footer .brand-footer {',
       '  display: flex !important;',
       '  justify-content: center !important;',
-      '  margin-bottom: 20px !important;',
+      '  margin-bottom: 0 !important;',
+      '}',
+      // Espacio entre el logo y la descripcion
+      '.footer .footer-brand-description {',
+      '  margin-top: 20px !important;',
+      '  margin-bottom: 0 !important;',
       '}',
       '.footer .block-footer {',
       '  text-align: center !important;',
+      '}',
+      // Mas espacio bajo los titulos para que respiren
+      '.footer .title-footer {',
+      '  margin-bottom: 20px !important;',
+      '}',
+      // Tablet/mobile: el logo ocupa todo el ancho, otras cols algo mas grandes
+      '@media (max-width: 991px) {',
+      '  .footer .div-block-107 { max-width: 100% !important; flex-basis: 100% !important; }',
+      '  .footer .grid-footer > .block-footer { max-width: 220px !important; flex-basis: 200px !important; }',
       '}'
     ].join('\n'));
     log('F7.1 footer logo resized + layout centrado');
@@ -698,7 +714,16 @@
   // =====================================================================
   function fixFooterExtraLinks() {
     var grid = document.querySelector('.footer .grid-footer');
-    if (!grid || grid.querySelector('.maquinasa-footer-interes')) return;
+    if (!grid) return;
+
+    // Dividir la direccion en 2 lineas si esta en una sola
+    var addressLink = document.querySelector('.footer .block-footer a.link-footer[href*="maps"]');
+    if (addressLink && !addressLink.querySelector('br') &&
+        addressLink.textContent.indexOf('Avda') !== -1) {
+      addressLink.innerHTML = 'Avda. Balsicas, 43 · Edf. Ribercar<br>30730 San Javier (Murcia)';
+    }
+
+    if (grid.querySelector('.maquinasa-footer-interes')) return;
 
     var interesHTML = [
       '<div class="block-footer maquinasa-footer-interes">',
