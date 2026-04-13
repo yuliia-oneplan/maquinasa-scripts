@@ -758,6 +758,13 @@
       '  overflow: hidden;',
       '  display: block;',
       '}',
+      // Subir todo el bloque de contacto: reducir padding top de la section
+      '.section:has(.contacts-wrapper) {',
+      '  padding-top: 30px !important;',
+      '}',
+      '.contacts-wrapper {',
+      '  padding-top: 10px !important;',
+      '}',
       // Titulos de la info (Horario, Informacion, Direccion, etc) pegados a su texto
       '.contacts-content-wrapper .heading-address,',
       '.contacts-content-wrapper h4,',
@@ -804,7 +811,7 @@
       '  font-size: 17px !important;',
       '  font-weight: 600;',
       '  text-decoration: none !important;',
-      '  margin: 90px auto 30px auto !important;',
+      '  margin: 50px auto 20px auto !important;',
       '  align-self: center !important;',
       '  box-shadow: 0 6px 20px rgba(37,211,102,.4);',
       '  transition: transform .25s ease, box-shadow .25s ease;',
