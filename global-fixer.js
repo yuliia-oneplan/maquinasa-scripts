@@ -963,37 +963,48 @@
       });
     }
 
-    // Hover en dropdown: forzar display via setProperty('important')
-    // que beats cualquier inline style de Webflow JS
+    // Hover en dropdown: combinar setProperty + clase w--open + listeners
+    // en multiples elementos para ganar al JS de Webflow
     var dropdowns = document.querySelectorAll('.w-dropdown');
     dropdowns.forEach(function (dd) {
       if (dd.getAttribute('data-maquinasa-hover') === '1') return;
       dd.setAttribute('data-maquinasa-hover', '1');
+      var toggle = dd.querySelector('.w-dropdown-toggle');
       var list = dd.querySelector('.w-dropdown-list');
-      if (!list) return;
+      if (!toggle || !list) return;
       var hoverTimeout = null;
       function show() {
+        list.classList.add('w--open');
+        toggle.classList.add('w--open');
+        toggle.setAttribute('aria-expanded', 'true');
         list.style.setProperty('display', 'block', 'important');
         list.style.setProperty('opacity', '1', 'important');
         list.style.setProperty('visibility', 'visible', 'important');
         list.style.setProperty('pointer-events', 'auto', 'important');
-        list.style.setProperty('position', 'absolute', 'important');
-        list.style.setProperty('top', '100%', 'important');
-        list.style.setProperty('z-index', '1000', 'important');
         list.style.setProperty('transform', 'none', 'important');
       }
       function hide() {
+        list.classList.remove('w--open');
+        toggle.classList.remove('w--open');
+        toggle.setAttribute('aria-expanded', 'false');
         list.style.removeProperty('display');
         list.style.removeProperty('opacity');
         list.style.removeProperty('visibility');
         list.style.removeProperty('pointer-events');
+        list.style.removeProperty('transform');
       }
-      dd.addEventListener('mouseenter', function () {
-        if (hoverTimeout) clearTimeout(hoverTimeout);
-        show();
-      });
-      dd.addEventListener('mouseleave', function () {
-        hoverTimeout = setTimeout(hide, 150);
+      // Listeners en el wrapper, el toggle, y el list (cubre todos los casos)
+      [dd, toggle, list].forEach(function (el) {
+        el.addEventListener('mouseenter', function () {
+          if (hoverTimeout) { clearTimeout(hoverTimeout); hoverTimeout = null; }
+          show();
+        });
+        el.addEventListener('mouseleave', function (e) {
+          // No cerrar si vamos hacia el list o el dd
+          var to = e.relatedTarget;
+          if (to && (dd.contains(to) || to === dd)) return;
+          hoverTimeout = setTimeout(hide, 200);
+        });
       });
     });
 
@@ -1078,8 +1089,7 @@
     injectCSS('maquinasa-services-css', [
       'html { scroll-behavior: smooth; }',
       '#inmobiliaria, #asesoramiento { scroll-margin-top: 100px; }',
-      // 2 cards juntas, mas anchas — RESPETANDO el margin-top:-50px del
-      // template que las superpone al hero
+      // 2 cards juntas, mas anchas, superpuestas al hero (-80px)
       '.services-cart-wrapper {',
       '  display: flex !important;',
       '  flex-wrap: wrap !important;',
@@ -1087,7 +1097,23 @@
       '  align-items: stretch !important;',
       '  gap: 30px !important;',
       '  width: 100% !important;',
-      '  /* margin-top: -50px del template se mantiene */',
+      '  margin-top: -80px !important;',
+      '  position: relative !important;',
+      '  z-index: 5 !important;',
+      '}',
+      // Reducir padding del .section que contiene las cards
+      '.section:has(.services-cart-wrapper),',
+      '.services-cart-wrapper + .section,',
+      '.section.section-heading-services {',
+      '  padding-top: 30px !important;',
+      '  padding-bottom: 30px !important;',
+      '}',
+      // Reducir margen entre el bloque de cards y el siguiente section
+      '.section .section-title-wrapper { margin-top: 20px !important; margin-bottom: 16px !important; }',
+      // .free-trial-wrapper (Contactanos y empieza...) section padding reducido
+      '.section:has(.free-trial-wrapper) {',
+      '  padding-top: 30px !important;',
+      '  padding-bottom: 30px !important;',
       '}',
       '.services-cart-wrapper .cart-block-services {',
       '  flex: 0 1 480px !important;',
