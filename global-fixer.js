@@ -963,26 +963,37 @@
       });
     }
 
-    // Activar hover en el dropdown disparando el click del propio Webflow
+    // Hover en dropdown: forzar display via setProperty('important')
+    // que beats cualquier inline style de Webflow JS
     var dropdowns = document.querySelectorAll('.w-dropdown');
     dropdowns.forEach(function (dd) {
       if (dd.getAttribute('data-maquinasa-hover') === '1') return;
       dd.setAttribute('data-maquinasa-hover', '1');
-      var toggle = dd.querySelector('.w-dropdown-toggle');
-      if (!toggle) return;
+      var list = dd.querySelector('.w-dropdown-list');
+      if (!list) return;
       var hoverTimeout = null;
+      function show() {
+        list.style.setProperty('display', 'block', 'important');
+        list.style.setProperty('opacity', '1', 'important');
+        list.style.setProperty('visibility', 'visible', 'important');
+        list.style.setProperty('pointer-events', 'auto', 'important');
+        list.style.setProperty('position', 'absolute', 'important');
+        list.style.setProperty('top', '100%', 'important');
+        list.style.setProperty('z-index', '1000', 'important');
+        list.style.setProperty('transform', 'none', 'important');
+      }
+      function hide() {
+        list.style.removeProperty('display');
+        list.style.removeProperty('opacity');
+        list.style.removeProperty('visibility');
+        list.style.removeProperty('pointer-events');
+      }
       dd.addEventListener('mouseenter', function () {
         if (hoverTimeout) clearTimeout(hoverTimeout);
-        if (!toggle.classList.contains('w--open')) {
-          toggle.click();
-        }
+        show();
       });
       dd.addEventListener('mouseleave', function () {
-        hoverTimeout = setTimeout(function () {
-          if (toggle.classList.contains('w--open')) {
-            toggle.click();
-          }
-        }, 150);
+        hoverTimeout = setTimeout(hide, 150);
       });
     });
 
@@ -1154,6 +1165,32 @@
       '  }',
       '  .services-cart-wrapper .block-up a {',
       '    margin: 14px auto !important;',
+      '  }',
+      // Reducir h2 (Todos los servicios... y Contactanos y...) en mobile
+      '  .heading-span,',
+      '  .heading-section-banner,',
+      '  h2.heading-span,',
+      '  .free-trial-wrapper h2 {',
+      '    font-size: 26px !important;',
+      '    line-height: 1.2 !important;',
+      '    margin-top: 0 !important;',
+      '    margin-bottom: 12px !important;',
+      '  }',
+      '  .heading-span .heading-text-span {',
+      '    font-size: inherit !important;',
+      '  }',
+      // Reducir el doble espacio entre cards y h2 "Todos los servicios" / "Contactanos"
+      '  .section-title-wrapper {',
+      '    margin-top: 20px !important;',
+      '    margin-bottom: 16px !important;',
+      '  }',
+      '  .section:has(.services-cart-wrapper) {',
+      '    padding-top: 20px !important;',
+      '    padding-bottom: 20px !important;',
+      '  }',
+      '  .section:has(.free-trial-wrapper) {',
+      '    padding-top: 20px !important;',
+      '    padding-bottom: 20px !important;',
       '  }',
       '}',
       '.maquinasa-inmobiliaria-text {',
