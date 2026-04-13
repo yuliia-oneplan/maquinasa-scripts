@@ -860,7 +860,7 @@
       '    margin: 30px 0 !important;',
       '  }',
       '  .contacts-content-wrapper > .maquinasa-whatsapp-btn {',
-      '    margin: 40px auto 70px auto !important;',
+      '    margin: 15px auto 80px auto !important;',
       '    display: flex !important;',
       '  }',
       '  .form-get-in {',
