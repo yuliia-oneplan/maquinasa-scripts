@@ -825,7 +825,7 @@
       '  font-size: 17px !important;',
       '  font-weight: 600;',
       '  text-decoration: none !important;',
-      '  margin: 0 auto 20px auto !important;',
+      '  margin: 24px auto 20px auto !important;',
       '  align-self: center !important;',
       '  box-shadow: 0 6px 20px rgba(37,211,102,.4);',
       '  transition: transform .25s ease, box-shadow .25s ease;',
@@ -942,7 +942,27 @@
   // F9 — Services page: 2 cards (INMOBILIARIA + ASESORAMIENTO),
   //      ocultar slider 'Experiencia', añadir texto + anclas
   // =====================================================================
+  // Navbar dropdown: dejar solo INMOBILIARIA y ASESORAMIENTO (global)
+  function fixNavServicesDropdown() {
+    var dropdownLinks = document.querySelectorAll('.dropdown-list .dropdown-link, .w-dropdown-list .w-dropdown-link');
+    if (!dropdownLinks.length) return;
+    dropdownLinks.forEach(function (link) {
+      var t = link.textContent.trim().toLowerCase();
+      if (t.indexOf('inmobiliaria') !== -1) {
+        link.textContent = 'INMOBILIARIA';
+        link.setAttribute('href', '/all-services#inmobiliaria');
+      } else if (t.indexOf('automoci') !== -1) {
+        link.textContent = 'ASESORAMIENTO';
+        link.setAttribute('href', '/all-services#asesoramiento');
+      } else if (t.indexOf('agricultura') !== -1 || t.indexOf('importaci') !== -1 ||
+                 t.indexOf('exportaci') !== -1) {
+        link.style.display = 'none';
+      }
+    });
+  }
+
   function fixServicesPage() {
+    fixNavServicesDropdown();
     if (!/all-services/.test(location.href)) return;
     if (document.documentElement.hasAttribute('data-maquinasa-services-fixed')) return;
 
@@ -1006,6 +1026,25 @@
     injectCSS('maquinasa-services-css', [
       'html { scroll-behavior: smooth; }',
       '#inmobiliaria, #asesoramiento { scroll-margin-top: 100px; }',
+      // Centrar las 2 cards
+      '.collection-list-wrapper-services-cart .w-dyn-items {',
+      '  display: flex !important;',
+      '  flex-wrap: wrap !important;',
+      '  justify-content: center !important;',
+      '  gap: 30px !important;',
+      '}',
+      '.collection-list-wrapper-services-cart .collection-item-service,',
+      '.collection-list-wrapper-services-cart .w-dyn-item {',
+      '  flex: 0 1 380px !important;',
+      '  max-width: 420px !important;',
+      '  margin: 0 !important;',
+      '}',
+      // Header de la pagina (h1/h2 superiores) menciona solo "servicios" generico,
+      // si hubiera lista de 4 servicios que enumere los nombres viejos, ocultarla
+      '.collection-list-wrapper-services-cart {',
+      '  display: flex !important;',
+      '  justify-content: center !important;',
+      '}',
       '.maquinasa-inmobiliaria-text {',
       '  max-width: 900px;',
       '  margin: 30px auto 50px auto;',
