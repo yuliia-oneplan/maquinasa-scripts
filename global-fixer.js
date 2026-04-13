@@ -694,6 +694,37 @@
   // Zona muerta (codigo antiguo, no ejecutar)
 
   // =====================================================================
+  // F7.2 + F7.3 — Footer: añadir Enlaces de interes + Legal
+  // =====================================================================
+  function fixFooterExtraLinks() {
+    var grid = document.querySelector('.footer .grid-footer');
+    if (!grid || grid.querySelector('.maquinasa-footer-interes')) return;
+
+    var interesHTML = [
+      '<div class="block-footer maquinasa-footer-interes">',
+      '  <h6 class="title-footer">Enlaces de interés</h6>',
+      '  <a href="https://www.davidwine.com" target="_blank" rel="noopener" class="link-footer">www.davidwine.com</a>',
+      '  <a href="https://www.leonorherza.com" target="_blank" rel="noopener" class="link-footer">www.leonorherza.com</a>',
+      '  <a href="https://www.colecciónnake.com" target="_blank" rel="noopener" class="link-footer">www.colecciónnake.com</a>',
+      '</div>'
+    ].join('\n');
+
+    var legalHTML = [
+      '<div class="block-footer maquinasa-footer-legal">',
+      '  <h6 class="title-footer">Legal</h6>',
+      '  <a href="/aviso-legal" class="link-footer">Aviso Legal</a>',
+      '  <a href="/politica-privacidad" class="link-footer">Política de Privacidad</a>',
+      '  <a href="/politica-cookies" class="link-footer">Política de Cookies</a>',
+      '  <a href="/terminos-condiciones" class="link-footer">Términos y Condiciones</a>',
+      '</div>'
+    ].join('\n');
+
+    grid.insertAdjacentHTML('beforeend', interesHTML);
+    grid.insertAdjacentHTML('beforeend', legalHTML);
+    log('F7.2 + F7.3 footer extra links inyectados');
+  }
+
+  // =====================================================================
   // F7.4 — Footer: dejar solo Instagram y Facebook (ocultar Twitter y Dribbble)
   // =====================================================================
   // El footer actual tiene 4 iconos: Facebook, Instagram, Twitter, Dribbble.
@@ -727,6 +758,7 @@
     fixFloatingWhatsApp(); // F6 floating (all pages)
     fixContactLayout();    // F6 + UX contact page 2-columnas
     fixFooterLogoSize();   // F7.1
+    fixFooterExtraLinks(); // F7.2 + F7.3
     fixFooterSocial();     // F7.4
     // Los siguientes fixes:
     // fixTeamSection();     // F3.1
