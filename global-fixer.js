@@ -937,6 +937,125 @@
   //
   // TODO: cuando el cliente mande sus URLs reales de Instagram y Facebook,
   // actualizarlas aqui en lugar de https://www.facebook.com/ genericas.
+
+  // =====================================================================
+  // F9 — Services page: 2 cards (INMOBILIARIA + ASESORAMIENTO),
+  //      ocultar slider 'Experiencia', añadir texto + anclas
+  // =====================================================================
+  function fixServicesPage() {
+    if (!/all-services/.test(location.href)) return;
+    if (document.documentElement.hasAttribute('data-maquinasa-services-fixed')) return;
+
+    var cards = document.querySelectorAll('.block-up');
+    if (!cards.length) return;
+
+    // Renombrar cards + añadir anclas
+    cards.forEach(function (card) {
+      var h3 = card.querySelector('h3');
+      if (!h3) return;
+      var text = h3.textContent.trim().toLowerCase();
+      var item = card.closest('.collection-item-service, .w-dyn-item') || card;
+      if (text.indexOf('inmobiliaria') !== -1) {
+        h3.textContent = 'INMOBILIARIA';
+        item.id = 'inmobiliaria';
+      } else if (text.indexOf('automoci') !== -1) {
+        h3.textContent = 'ASESORAMIENTO';
+        item.id = 'asesoramiento';
+        var p = item.querySelector('p, .paragraph, .text-block');
+        if (p) p.textContent = 'Expertos en planificación estratégica y desarrollo de negocio para tu empresa.';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    // Inyectar texto bajo INMOBILIARIA
+    var inmo = document.querySelector('#inmobiliaria');
+    if (inmo && !document.querySelector('.maquinasa-inmobiliaria-text')) {
+      var txt = document.createElement('div');
+      txt.className = 'maquinasa-inmobiliaria-text';
+      txt.innerHTML = [
+        '<div class="maquinasa-svc-text-inner">',
+        '  <p>En MAQUINASA, te ayudamos a que encuentres la propiedad que se ajuste a tus necesidades, ya sea para residir, invertir o emprender tu negocio.</p>',
+        '  <ul>',
+        '    <li><strong>Compra de Inmuebles:</strong> Te acompañamos en todo el proceso de adquisición, desde la selección de inmuebles rústicos o urbanos hasta la gestión legal y trámites, asegurando una compra segura y exitosa.</li>',
+        '    <li><strong>Alquiler de Inmuebles:</strong> Ponemos a tu disposición una amplia cartera de propiedades en alquiler y te guiamos en cada paso del arrendamiento, garantizando una experiencia transparente y sin preocupaciones para inquilinos y propietarios.</li>',
+        '  </ul>',
+        '  <p>Confía en MAQUINASA para tu próxima compra o alquiler, te garantizamos la máxima profesionalidad y eficiencia.</p>',
+        '</div>'
+      ].join('\n');
+      inmo.insertAdjacentElement('afterend', txt);
+    }
+
+    // Ocultar slider "Experiencia, excelencia y compromiso"
+    var slider = document.querySelector('.slider-block.w-slider');
+    if (slider) {
+      var sliderSection = slider.closest('.section') || slider;
+      sliderSection.style.display = 'none';
+    }
+    // Tambien ocultar cualquier h2 con 'Experiencia ... excelencia'
+    var allH2 = document.querySelectorAll('h2');
+    allH2.forEach(function (h) {
+      if (/experiencia.*excelencia/i.test(h.textContent)) {
+        var s = h.closest('.section') || h.parentNode;
+        if (s) s.style.display = 'none';
+      }
+    });
+
+    // CSS: bloque texto + scroll-behavior smooth para que las anclas
+    // de Home (#inmobiliaria, #asesoramiento) deslicen suavemente
+    injectCSS('maquinasa-services-css', [
+      'html { scroll-behavior: smooth; }',
+      '#inmobiliaria, #asesoramiento { scroll-margin-top: 100px; }',
+      '.maquinasa-inmobiliaria-text {',
+      '  max-width: 900px;',
+      '  margin: 30px auto 50px auto;',
+      '  padding: 0 20px;',
+      '}',
+      '.maquinasa-svc-text-inner {',
+      '  background: #f8f8f8;',
+      '  border-left: 4px solid #184044;',
+      '  padding: 28px 32px;',
+      '  border-radius: 8px;',
+      '  font-size: 16px;',
+      '  line-height: 1.6;',
+      '  color: #333;',
+      '}',
+      '.maquinasa-svc-text-inner p {',
+      '  margin: 0 0 16px 0;',
+      '}',
+      '.maquinasa-svc-text-inner ul {',
+      '  list-style: none;',
+      '  padding: 0;',
+      '  margin: 16px 0;',
+      '}',
+      '.maquinasa-svc-text-inner li {',
+      '  padding: 10px 0 10px 24px;',
+      '  position: relative;',
+      '  margin-bottom: 8px;',
+      '}',
+      '.maquinasa-svc-text-inner li:before {',
+      '  content: "▸";',
+      '  color: #184044;',
+      '  font-weight: bold;',
+      '  position: absolute;',
+      '  left: 0;',
+      '  top: 10px;',
+      '}',
+      '.maquinasa-svc-text-inner strong {',
+      '  color: #184044;',
+      '}',
+      '@media (max-width: 767px) {',
+      '  .maquinasa-svc-text-inner {',
+      '    padding: 22px 20px;',
+      '    font-size: 15px;',
+      '  }',
+      '}'
+    ].join('\n'));
+
+    document.documentElement.setAttribute('data-maquinasa-services-fixed', '1');
+    log('F9 services page reorganizado');
+  }
+
   function fixFooterSocial() {
     var icons = document.querySelectorAll('.footer-social-icon');
     if (!icons.length) return;
@@ -961,6 +1080,7 @@
     fixContactGdpr();      // F5.1
     fixFloatingWhatsApp(); // F6 floating (all pages)
     fixContactLayout();    // F6 + UX contact page 2-columnas
+    fixServicesPage();     // F9 services
     fixFooterLogoSize();   // F7.1
     fixFooterExtraLinks(); // F7.2 + F7.3
     fixFooterSocial();     // F7.4
