@@ -985,14 +985,32 @@
       });
     });
 
-    // CSS extra: el dropdown sale visible al hover incluso si Webflow JS no lo abre
+    // CSS pure-hover (sin depender de JS de Webflow)
     injectCSS('maquinasa-nav-dropdown', [
+      // Padre del dropdown debe tener position relative para anclar el hijo
+      '.w-dropdown { position: relative !important; }',
+      // Estado por defecto: ocultar dropdown list (anula display:none de Webflow)
+      '.w-dropdown-list, .dropdown-list {',
+      '  display: none !important;',
+      '  opacity: 0 !important;',
+      '  pointer-events: none !important;',
+      '}',
+      // Hover: mostrar el dropdown
+      '.w-dropdown:hover > .w-dropdown-list,',
+      '.w-dropdown:hover > .dropdown-list,',
       '.w-dropdown:hover .w-dropdown-list,',
-      '.w-dropdown:hover .dropdown-list {',
+      '.w-dropdown:hover .dropdown-list,',
+      '.w-dropdown.w--open > .w-dropdown-list,',
+      '.w-dropdown.w--open > .dropdown-list {',
       '  display: block !important;',
       '  opacity: 1 !important;',
       '  visibility: visible !important;',
       '  pointer-events: auto !important;',
+      '  transform: none !important;',
+      '  position: absolute !important;',
+      '  top: 100% !important;',
+      '  left: 0 !important;',
+      '  z-index: 1000 !important;',
       '}'
     ].join('\n'));
   }
@@ -1024,23 +1042,9 @@
       }
     });
 
-    // Inyectar texto bajo INMOBILIARIA
-    var inmo = document.querySelector('#inmobiliaria');
-    if (inmo && !document.querySelector('.maquinasa-inmobiliaria-text')) {
-      var txt = document.createElement('div');
-      txt.className = 'maquinasa-inmobiliaria-text';
-      txt.innerHTML = [
-        '<div class="maquinasa-svc-text-inner">',
-        '  <p>En MAQUINASA, te ayudamos a que encuentres la propiedad que se ajuste a tus necesidades, ya sea para residir, invertir o emprender tu negocio.</p>',
-        '  <ul>',
-        '    <li><strong>Compra de Inmuebles:</strong> Te acompañamos en todo el proceso de adquisición, desde la selección de inmuebles rústicos o urbanos hasta la gestión legal y trámites, asegurando una compra segura y exitosa.</li>',
-        '    <li><strong>Alquiler de Inmuebles:</strong> Ponemos a tu disposición una amplia cartera de propiedades en alquiler y te guiamos en cada paso del arrendamiento, garantizando una experiencia transparente y sin preocupaciones para inquilinos y propietarios.</li>',
-        '  </ul>',
-        '  <p>Confía en MAQUINASA para tu próxima compra o alquiler, te garantizamos la máxima profesionalidad y eficiencia.</p>',
-        '</div>'
-      ].join('\n');
-      inmo.insertAdjacentElement('afterend', txt);
-    }
+    // Eliminar texto antiguo si existe (de runs anteriores)
+    var oldText = document.querySelector('.maquinasa-inmobiliaria-text');
+    if (oldText) oldText.parentNode.removeChild(oldText);
 
     // Ocultar slider "Experiencia, excelencia y compromiso"
     var slider = document.querySelector('.slider-block.w-slider');
@@ -1063,40 +1067,51 @@
       'html { scroll-behavior: smooth; }',
       '#inmobiliaria, #asesoramiento { scroll-margin-top: 100px; }',
       // 2 cards juntas, mas anchas, centradas en medio de la pagina
-      '.collection-list-wrapper-services-cart {',
-      '  display: flex !important;',
-      '  justify-content: center !important;',
-      '  width: 100% !important;',
-      '  max-width: 1200px !important;',
-      '  margin: 0 auto !important;',
-      '}',
-      '.collection-list-wrapper-services-cart .w-dyn-items {',
+      // Selectores REALES: .services-cart-wrapper > .cart-block-services > ... .cart-services
+      '.services-cart-wrapper {',
       '  display: flex !important;',
       '  flex-wrap: wrap !important;',
       '  justify-content: center !important;',
       '  align-items: stretch !important;',
       '  gap: 40px !important;',
       '  width: 100% !important;',
+      '  max-width: 1200px !important;',
+      '  margin: 0 auto !important;',
       '}',
-      '.collection-list-wrapper-services-cart .collection-item-service,',
-      '.collection-list-wrapper-services-cart .w-dyn-item {',
+      '.services-cart-wrapper .cart-block-services {',
       '  flex: 1 1 480px !important;',
       '  max-width: 540px !important;',
       '  margin: 0 !important;',
+      '  display: flex !important;',
+      '  flex-direction: column !important;',
       '}',
-      // Card 'block-up' centrado interno (botones, texto)
-      '.collection-list-wrapper-services-cart .block-up {',
+      '.services-cart-wrapper .collection-list-wrapper-services-cart {',
+      '  width: 100% !important;',
+      '  max-width: 100% !important;',
+      '  margin: 0 !important;',
+      '}',
+      '.services-cart-wrapper .w-dyn-items {',
+      '  width: 100% !important;',
+      '}',
+      '.services-cart-wrapper .collection-item-services-cart {',
+      '  width: 100% !important;',
+      '}',
+      '.services-cart-wrapper .cart-services,',
+      '.services-cart-wrapper .block-up {',
       '  width: 100% !important;',
       '  max-width: 100% !important;',
       '  display: flex !important;',
       '  flex-direction: column !important;',
       '  align-items: center !important;',
       '  text-align: center !important;',
+      '  height: 100% !important;',
+      '  flex: 1 !important;',
       '}',
-      // Boton 'Saber mas' centrado y con margenes iguales
-      '.collection-list-wrapper-services-cart .block-up a,',
-      '.collection-list-wrapper-services-cart .block-up .button {',
-      '  margin: 24px auto 0 auto !important;',
+      // Boton "Saber mas" centrado, mismo margen arriba/abajo dentro de la card
+      '.services-cart-wrapper .block-up a,',
+      '.services-cart-wrapper .block-up .button,',
+      '.services-cart-wrapper .cart-services a.button {',
+      '  margin: 24px auto !important;',
       '  align-self: center !important;',
       '}',
       '.maquinasa-inmobiliaria-text {',
