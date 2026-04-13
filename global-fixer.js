@@ -283,6 +283,14 @@
       '  padding-left: 0 !important;',
       '  padding-right: 0 !important;',
       '}',
+      // CRITICO: el template envuelve el grid en .content-2 con max-width
+      // 1310px y padding 40+29. Lo anulamos para que el grid use TODO el ancho.
+      '.footer .content-2 {',
+      '  max-width: 100% !important;',
+      '  width: 100% !important;',
+      '  padding-left: 16px !important;',
+      '  padding-right: 16px !important;',
+      '}',
       // Layout del footer: GRID full-width
       '.footer .grid-footer {',
       '  display: grid !important;',
