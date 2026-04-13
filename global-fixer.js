@@ -963,25 +963,26 @@
       });
     }
 
-    // Activar hover en el dropdown de Webflow
+    // Activar hover en el dropdown disparando el click del propio Webflow
     var dropdowns = document.querySelectorAll('.w-dropdown');
     dropdowns.forEach(function (dd) {
-      dd.setAttribute('data-hover', 'true');
-      dd.setAttribute('data-delay', '0');
-      // Hover JS: agregar/quitar clase w--open al hover
+      if (dd.getAttribute('data-maquinasa-hover') === '1') return;
+      dd.setAttribute('data-maquinasa-hover', '1');
+      var toggle = dd.querySelector('.w-dropdown-toggle');
+      if (!toggle) return;
+      var hoverTimeout = null;
       dd.addEventListener('mouseenter', function () {
-        dd.classList.add('w--open');
-        var toggle = dd.querySelector('.w-dropdown-toggle');
-        var list = dd.querySelector('.w-dropdown-list');
-        if (toggle) toggle.classList.add('w--open');
-        if (list) list.classList.add('w--open');
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        if (!toggle.classList.contains('w--open')) {
+          toggle.click();
+        }
       });
       dd.addEventListener('mouseleave', function () {
-        dd.classList.remove('w--open');
-        var toggle = dd.querySelector('.w-dropdown-toggle');
-        var list = dd.querySelector('.w-dropdown-list');
-        if (toggle) toggle.classList.remove('w--open');
-        if (list) list.classList.remove('w--open');
+        hoverTimeout = setTimeout(function () {
+          if (toggle.classList.contains('w--open')) {
+            toggle.click();
+          }
+        }, 150);
       });
     });
 
@@ -1066,21 +1067,21 @@
     injectCSS('maquinasa-services-css', [
       'html { scroll-behavior: smooth; }',
       '#inmobiliaria, #asesoramiento { scroll-margin-top: 100px; }',
-      // 2 cards juntas, mas anchas, centradas en medio de la pagina
-      // Selectores REALES: .services-cart-wrapper > .cart-block-services > ... .cart-services
+      // 2 cards juntas, mas anchas — RESPETANDO el margin-top:-50px del
+      // template que las superpone al hero
       '.services-cart-wrapper {',
       '  display: flex !important;',
       '  flex-wrap: wrap !important;',
       '  justify-content: center !important;',
       '  align-items: stretch !important;',
-      '  gap: 40px !important;',
+      '  gap: 30px !important;',
       '  width: 100% !important;',
-      '  max-width: 1200px !important;',
-      '  margin: 0 auto !important;',
+      '  /* margin-top: -50px del template se mantiene */',
       '}',
       '.services-cart-wrapper .cart-block-services {',
-      '  flex: 1 1 480px !important;',
-      '  max-width: 540px !important;',
+      '  flex: 0 1 480px !important;',
+      '  width: 480px !important;',
+      '  max-width: 48% !important;',
       '  margin: 0 !important;',
       '  display: flex !important;',
       '  flex-direction: column !important;',
