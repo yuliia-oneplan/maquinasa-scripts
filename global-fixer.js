@@ -825,7 +825,7 @@
       '  font-size: 17px !important;',
       '  font-weight: 600;',
       '  text-decoration: none !important;',
-      '  margin: 24px auto 20px auto !important;',
+      '  margin: 60px auto 30px auto !important;',
       '  align-self: center !important;',
       '  box-shadow: 0 6px 20px rgba(37,211,102,.4);',
       '  transition: transform .25s ease, box-shadow .25s ease;',
@@ -942,23 +942,59 @@
   // F9 — Services page: 2 cards (INMOBILIARIA + ASESORAMIENTO),
   //      ocultar slider 'Experiencia', añadir texto + anclas
   // =====================================================================
-  // Navbar dropdown: dejar solo INMOBILIARIA y ASESORAMIENTO (global)
+  // Navbar dropdown Servicios: 2 items + abrir en hover (global)
   function fixNavServicesDropdown() {
     var dropdownLinks = document.querySelectorAll('.dropdown-list .dropdown-link, .w-dropdown-list .w-dropdown-link');
-    if (!dropdownLinks.length) return;
-    dropdownLinks.forEach(function (link) {
-      var t = link.textContent.trim().toLowerCase();
-      if (t.indexOf('inmobiliaria') !== -1) {
-        link.textContent = 'INMOBILIARIA';
-        link.setAttribute('href', '/all-services#inmobiliaria');
-      } else if (t.indexOf('automoci') !== -1) {
-        link.textContent = 'ASESORAMIENTO';
-        link.setAttribute('href', '/all-services#asesoramiento');
-      } else if (t.indexOf('agricultura') !== -1 || t.indexOf('importaci') !== -1 ||
-                 t.indexOf('exportaci') !== -1) {
-        link.style.display = 'none';
-      }
+    if (dropdownLinks.length) {
+      dropdownLinks.forEach(function (link) {
+        var t = link.textContent.trim().toLowerCase();
+        if (t.indexOf('inmobiliaria') !== -1) {
+          link.textContent = 'INMOBILIARIA';
+          link.setAttribute('href', '/all-services#inmobiliaria');
+          link.style.display = '';
+        } else if (t.indexOf('automoci') !== -1) {
+          link.textContent = 'ASESORAMIENTO';
+          link.setAttribute('href', '/all-services#asesoramiento');
+          link.style.display = '';
+        } else {
+          // borrar (display none) cualquier otro item del dropdown
+          link.style.display = 'none';
+        }
+      });
+    }
+
+    // Activar hover en el dropdown de Webflow
+    var dropdowns = document.querySelectorAll('.w-dropdown');
+    dropdowns.forEach(function (dd) {
+      dd.setAttribute('data-hover', 'true');
+      dd.setAttribute('data-delay', '0');
+      // Hover JS: agregar/quitar clase w--open al hover
+      dd.addEventListener('mouseenter', function () {
+        dd.classList.add('w--open');
+        var toggle = dd.querySelector('.w-dropdown-toggle');
+        var list = dd.querySelector('.w-dropdown-list');
+        if (toggle) toggle.classList.add('w--open');
+        if (list) list.classList.add('w--open');
+      });
+      dd.addEventListener('mouseleave', function () {
+        dd.classList.remove('w--open');
+        var toggle = dd.querySelector('.w-dropdown-toggle');
+        var list = dd.querySelector('.w-dropdown-list');
+        if (toggle) toggle.classList.remove('w--open');
+        if (list) list.classList.remove('w--open');
+      });
     });
+
+    // CSS extra: el dropdown sale visible al hover incluso si Webflow JS no lo abre
+    injectCSS('maquinasa-nav-dropdown', [
+      '.w-dropdown:hover .w-dropdown-list,',
+      '.w-dropdown:hover .dropdown-list {',
+      '  display: block !important;',
+      '  opacity: 1 !important;',
+      '  visibility: visible !important;',
+      '  pointer-events: auto !important;',
+      '}'
+    ].join('\n'));
   }
 
   function fixServicesPage() {
@@ -1026,24 +1062,42 @@
     injectCSS('maquinasa-services-css', [
       'html { scroll-behavior: smooth; }',
       '#inmobiliaria, #asesoramiento { scroll-margin-top: 100px; }',
-      // Centrar las 2 cards
+      // 2 cards juntas, mas anchas, centradas en medio de la pagina
+      '.collection-list-wrapper-services-cart {',
+      '  display: flex !important;',
+      '  justify-content: center !important;',
+      '  width: 100% !important;',
+      '  max-width: 1200px !important;',
+      '  margin: 0 auto !important;',
+      '}',
       '.collection-list-wrapper-services-cart .w-dyn-items {',
       '  display: flex !important;',
       '  flex-wrap: wrap !important;',
       '  justify-content: center !important;',
-      '  gap: 30px !important;',
+      '  align-items: stretch !important;',
+      '  gap: 40px !important;',
+      '  width: 100% !important;',
       '}',
       '.collection-list-wrapper-services-cart .collection-item-service,',
       '.collection-list-wrapper-services-cart .w-dyn-item {',
-      '  flex: 0 1 380px !important;',
-      '  max-width: 420px !important;',
+      '  flex: 1 1 480px !important;',
+      '  max-width: 540px !important;',
       '  margin: 0 !important;',
       '}',
-      // Header de la pagina (h1/h2 superiores) menciona solo "servicios" generico,
-      // si hubiera lista de 4 servicios que enumere los nombres viejos, ocultarla
-      '.collection-list-wrapper-services-cart {',
+      // Card 'block-up' centrado interno (botones, texto)
+      '.collection-list-wrapper-services-cart .block-up {',
+      '  width: 100% !important;',
+      '  max-width: 100% !important;',
       '  display: flex !important;',
-      '  justify-content: center !important;',
+      '  flex-direction: column !important;',
+      '  align-items: center !important;',
+      '  text-align: center !important;',
+      '}',
+      // Boton 'Saber mas' centrado y con margenes iguales
+      '.collection-list-wrapper-services-cart .block-up a,',
+      '.collection-list-wrapper-services-cart .block-up .button {',
+      '  margin: 24px auto 0 auto !important;',
+      '  align-self: center !important;',
       '}',
       '.maquinasa-inmobiliaria-text {',
       '  max-width: 900px;',
