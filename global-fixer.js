@@ -565,12 +565,104 @@
   }
 
   // =====================================================================
-  // F6 + UX — Contact: layout 2 columnas (info card + formulario)
+  // F6 + UX — Contact: layout 2 columnas (info existente + form) + map abajo
   // =====================================================================
+  // El template tiene 3 columnas: info + mapa + form. Reorganizamos a 2
+  // columnas (info + form) y movemos el mapa debajo a ancho completo.
+  // Añadimos el boton WhatsApp dentro de la columna info existente.
   function fixContactLayout() {
     if (!/contact-us/.test(location.href)) return;
-    if (document.querySelector('.maquinasa-contact-info')) return;
+    if (document.querySelector('[data-maquinasa-contact-fixed]')) return;
 
+    var contactsWrapper = document.querySelector('.contacts-wrapper');
+    var contentWrapper = document.querySelector('.contacts-content-wrapper');
+    var mapWrapper = document.querySelector('.image-location');
+    var formWrapper = document.querySelector('.contacts-form-wrapper');
+
+    if (!contactsWrapper || !contentWrapper || !formWrapper) return;
+    contactsWrapper.setAttribute('data-maquinasa-contact-fixed', '1');
+
+    // 1) Mover el mapa fuera de contacts-wrapper, a su hermano siguiente
+    if (mapWrapper && mapWrapper.parentNode === contactsWrapper) {
+      contactsWrapper.parentNode.insertBefore(mapWrapper, contactsWrapper.nextSibling);
+    }
+
+    // 2) Añadir boton WhatsApp dentro de contacts-content-wrapper (si no existe ya)
+    if (!contentWrapper.querySelector('.maquinasa-whatsapp-btn')) {
+      var waBtn = document.createElement('a');
+      waBtn.className = 'maquinasa-whatsapp-btn';
+      waBtn.href = 'https://wa.me/34637038528';
+      waBtn.target = '_blank';
+      waBtn.rel = 'noopener';
+      waBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.599 5.381l-.999 3.648 3.889-1.728zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.149-.173.198-.297.298-.495.099-.198.05-.372-.025-.521-.074-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg><span>Contactar por WhatsApp</span>';
+      contentWrapper.appendChild(waBtn);
+    }
+
+    injectCSS('maquinasa-contact-layout', [
+      // Parent: 2 cols equilibradas en desktop
+      '.contacts-wrapper {',
+      '  display: grid !important;',
+      '  grid-template-columns: 1fr 1.2fr !important;',
+      '  gap: 60px !important;',
+      '  align-items: start !important;',
+      '}',
+      '.contacts-wrapper > * {',
+      '  width: 100% !important;',
+      '  max-width: 100% !important;',
+      '  margin: 0 !important;',
+      '}',
+      // Mapa debajo a ancho completo
+      '.image-location {',
+      '  display: block !important;',
+      '  width: 100% !important;',
+      '  max-width: 1200px !important;',
+      '  margin: 40px auto 80px auto !important;',
+      '  padding: 0 20px !important;',
+      '  box-sizing: border-box;',
+      '}',
+      '.image-location .w-embed.w-iframe,',
+      '.image-location iframe {',
+      '  width: 100% !important;',
+      '  border-radius: 12px;',
+      '  overflow: hidden;',
+      '}',
+      // Boton WhatsApp dentro de contacts-content-wrapper
+      '.contacts-content-wrapper .maquinasa-whatsapp-btn {',
+      '  display: inline-flex !important;',
+      '  align-items: center;',
+      '  gap: 10px;',
+      '  background: #25d366 !important;',
+      '  color: #ffffff !important;',
+      '  padding: 14px 24px !important;',
+      '  border-radius: 50px !important;',
+      '  font-size: 15px !important;',
+      '  font-weight: 600;',
+      '  text-decoration: none !important;',
+      '  margin: 30px 0 0 0 !important;',
+      '  box-shadow: 0 4px 14px rgba(37,211,102,.35);',
+      '  transition: transform .2s ease, box-shadow .2s ease;',
+      '}',
+      '.contacts-content-wrapper .maquinasa-whatsapp-btn:hover {',
+      '  transform: translateY(-2px);',
+      '  box-shadow: 0 6px 20px rgba(37,211,102,.5);',
+      '}',
+      // Mobile/tablet: stacked
+      '@media (max-width: 991px) {',
+      '  .contacts-wrapper {',
+      '    grid-template-columns: 1fr !important;',
+      '    gap: 40px !important;',
+      '  }',
+      '  .image-location {',
+      '    margin: 30px auto 60px auto !important;',
+      '  }',
+      '}'
+    ].join('\n'));
+    log('F6+UX Contact layout reorganizado (2 cols + mapa abajo)');
+    return;
+  }
+
+  // Zona muerta (codigo antiguo, no ejecutar)
+  function _unused_fixContactLayout() {
     var wrapper = document.querySelector('.contacts-form-wrapper');
     var formGetIn = document.querySelector('.form-get-in');
     if (!wrapper || !formGetIn) return;
