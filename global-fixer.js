@@ -278,19 +278,22 @@
       '    width: auto !important;',
       '  }',
       '}',
-      // Padding lateral minimo en el footer para dar todo el espacio al grid
+      // Padding lateral del footer al minimo (mas espacio para el grid)
       '.footer {',
-      '  padding-left: 10px !important;',
-      '  padding-right: 10px !important;',
+      '  padding-left: 0 !important;',
+      '  padding-right: 0 !important;',
       '}',
-      // Layout del footer: GRID con 6 cols en 1 fila + min-width amplio
+      // Layout del footer: GRID full-width con cols mas anchas
       '.footer .grid-footer {',
       '  display: grid !important;',
-      '  grid-template-columns: 240px repeat(5, minmax(170px, 1fr)) !important;',
-      '  gap: 50px 40px !important;',
+      '  grid-template-columns: 220px repeat(5, minmax(210px, 1fr)) !important;',
+      '  gap: 50px 36px !important;',
       '  text-align: center !important;',
-      '  max-width: 1700px !important;',
-      '  margin: 0 auto 30px auto !important;',
+      '  width: 100% !important;',
+      '  max-width: none !important;',
+      '  margin: 0 0 30px 0 !important;',
+      '  padding: 0 24px !important;',
+      '  box-sizing: border-box !important;',
       '  align-items: start !important;',
       '}',
       // Email/enlaces largos: permitir wrap dentro de su columna
