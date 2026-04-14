@@ -1361,13 +1361,15 @@
       if (text.indexOf('inmobiliaria') !== -1) {
         h3.textContent = 'INMOBILIARIA';
         item.id = 'inmobiliaria';
-        if (saberMas) saberMas.setAttribute('href', '#inmobiliaria');
+        // "Saber mas" va a la pagina dedicada /inmobiliaria
+        if (saberMas) saberMas.setAttribute('href', '/inmobiliaria');
       } else if (text.indexOf('automoci') !== -1 || text.indexOf('asesoramiento') !== -1) {
         h3.textContent = 'ASESORAMIENTO';
         item.id = 'asesoramiento';
         var p = item.querySelector('p, .paragraph, .text-block');
         if (p) p.textContent = 'Expertos en planificación estratégica y desarrollo de negocio para tu empresa.';
-        if (saberMas) saberMas.setAttribute('href', '#asesoramiento');
+        // "Saber mas" -> /contact-us (no hay pagina dedicada todavia)
+        if (saberMas) saberMas.setAttribute('href', '/contact-us');
       } else {
         item.style.display = 'none';
       }
