@@ -1008,6 +1008,14 @@
       '  width: 60% !important;',
       '  padding-right: 0 !important;',
       '}',
+      // Separar h3 del parrafo y alinear el texto al mismo borde izq
+      '.service-details-content-wrapper .div-block-3 h3 {',
+      '  margin-bottom: 28px !important;',
+      '}',
+      '.service-details-content-wrapper .div-block-3 .paragraph-2 {',
+      '  padding-left: 0 !important;',
+      '  margin-top: 0 !important;',
+      '}',
       // CRITICO: la imagen tiene position:absolute en el template
       // (inset 10% 0 auto auto + max-width 370 + height 400px fijo),
       // lo que la saca del flujo flex. La devolvemos al flujo normal.
