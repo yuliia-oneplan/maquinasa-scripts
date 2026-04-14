@@ -1102,9 +1102,29 @@
       }
     });
 
-    // Eliminar texto antiguo si existe (de runs anteriores)
-    var oldText = document.querySelector('.maquinasa-inmobiliaria-text');
-    if (oldText) oldText.parentNode.removeChild(oldText);
+    // Inyectar bloque de texto INMOBILIARIA despues de las cards
+    // (se posiciona como hermano siguiente de .services-cart-wrapper)
+    if (!document.querySelector('.maquinasa-inmobiliaria-text')) {
+      var cartWrapper = document.querySelector('.services-cart-wrapper');
+      if (cartWrapper) {
+        var txtBlock = document.createElement('div');
+        txtBlock.className = 'maquinasa-inmobiliaria-text';
+        txtBlock.innerHTML = [
+          '<div class="maquinasa-svc-text-inner">',
+          '  <p>En <strong>MAQUINASA</strong>, te ayudamos a que encuentres la propiedad que se ajuste a tus necesidades, ya sea para residir, invertir o emprender tu negocio.</p>',
+          '  <ul>',
+          '    <li><strong>Compra de Inmuebles:</strong> Te acompañamos en todo el proceso de adquisición, desde la selección de inmuebles rústicos o urbanos hasta la gestión legal y trámites, asegurando una compra segura y exitosa.</li>',
+          '    <li><strong>Alquiler de Inmuebles:</strong> Ponemos a tu disposición una amplia cartera de propiedades en alquiler y te guiamos en cada paso del arrendamiento, garantizando una experiencia transparente y sin preocupaciones para inquilinos y propietarios.</li>',
+          '  </ul>',
+          '  <p>Confía en <strong>MAQUINASA</strong> para tu próxima compra o alquiler, te garantizamos la máxima profesionalidad y eficiencia.</p>',
+          '</div>'
+        ].join('\n');
+        // Colocar como hermano siguiente del .services-cart-wrapper
+        if (cartWrapper.parentNode) {
+          cartWrapper.parentNode.insertBefore(txtBlock, cartWrapper.nextSibling);
+        }
+      }
+    }
 
     // Ocultar slider "Experiencia, excelencia y compromiso"
     var slider = document.querySelector('.slider-block.w-slider');
