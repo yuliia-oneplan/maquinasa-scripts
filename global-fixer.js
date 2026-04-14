@@ -1010,8 +1010,7 @@
       '.maquinasa-custom-menu {',
       '  position: absolute;',
       '  top: 100%;',
-      '  left: 50%;',
-      '  transform: translateX(-50%);',
+      '  left: 0;',
       '  background: #ffffff;',
       '  border-radius: 8px;',
       '  box-shadow: 0 8px 30px rgba(0,0,0,.18);',
@@ -1054,6 +1053,16 @@
 
     var cards = document.querySelectorAll('.block-up');
     if (!cards.length) return;
+
+    // Ocultar .cart-block-services vacios (template placeholders sin contenido)
+    var blocks = document.querySelectorAll('.cart-block-services');
+    blocks.forEach(function (b) {
+      // Vacio = sin .block-up hijo o sin texto significativo
+      var hasContent = b.querySelector('.block-up') && b.textContent.trim().length > 0;
+      if (!hasContent) {
+        b.style.display = 'none';
+      }
+    });
 
     // Renombrar cards + añadir anclas + actualizar hrefs de "Saber mas"
     cards.forEach(function (card) {
