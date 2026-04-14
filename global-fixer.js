@@ -1008,35 +1008,38 @@
     // CSS del menu custom
     injectCSS('maquinasa-custom-dropdown', [
       '.maquinasa-custom-menu {',
-      '  position: absolute;',
-      '  top: 100%;',
-      '  left: 0;',
-      '  background: #ffffff;',
-      '  border-radius: 8px;',
-      '  box-shadow: 0 8px 30px rgba(0,0,0,.18);',
-      '  padding: 8px 0;',
+      '  position: absolute !important;',
+      '  top: 100% !important;',
+      '  left: 0 !important;',
+      '  right: auto !important;',
+      '  transform: none !important;',
+      '  background: #184044 !important;',
+      '  border-radius: 6px;',
+      '  box-shadow: 0 8px 30px rgba(0,0,0,.22);',
+      '  padding: 6px 0;',
       '  min-width: 220px;',
       '  display: none;',
-      '  z-index: 9999;',
-      '  margin-top: 8px;',
+      '  z-index: 9999 !important;',
+      '  margin-top: 10px;',
       '}',
       '.header-link:hover .maquinasa-custom-menu,',
       '.maquinasa-custom-menu:hover {',
-      '  display: block;',
+      '  display: block !important;',
       '}',
       '.maquinasa-custom-menu-item {',
-      '  display: block;',
-      '  padding: 12px 20px;',
-      '  color: #184044 !important;',
+      '  display: block !important;',
+      '  padding: 12px 22px;',
+      '  color: #ffffff !important;',
       '  text-decoration: none !important;',
       '  font-size: 14px;',
       '  font-weight: 600;',
       '  letter-spacing: 0.5px;',
       '  transition: background 0.15s ease;',
+      '  white-space: nowrap;',
       '}',
       '.maquinasa-custom-menu-item:hover {',
-      '  background: #f3f5f5;',
-      '  color: #25d366 !important;',
+      '  background: rgba(255,255,255,.12);',
+      '  color: #ffffff !important;',
       '}',
       // Ocultar dropdown original para siempre
       '.w-dropdown .w-dropdown-list,',
@@ -1057,11 +1060,22 @@
     // Ocultar .cart-block-services vacios (template placeholders sin contenido)
     var blocks = document.querySelectorAll('.cart-block-services');
     blocks.forEach(function (b) {
-      // Vacio = sin .block-up hijo o sin texto significativo
       var hasContent = b.querySelector('.block-up') && b.textContent.trim().length > 0;
       if (!hasContent) {
         b.style.display = 'none';
       }
+    });
+
+    // Desactivar animaciones de Webflow IX2 en las cards: eliminar data-w-id
+    // de las cards y de TODOS los descendientes para que IX2 no las
+    // maneje. Tambien resetear style inline que IX2 haya puesto.
+    var allCardEls = document.querySelectorAll('.cart-block-services, .cart-block-services *, .services-cart-wrapper *');
+    allCardEls.forEach(function (el) {
+      el.removeAttribute('data-w-id');
+      el.style.removeProperty('opacity');
+      el.style.removeProperty('transform');
+      // Forzar visible
+      el.style.setProperty('opacity', '1', 'important');
     });
 
     // Renombrar cards + añadir anclas + actualizar hrefs de "Saber mas"
@@ -1173,6 +1187,25 @@
       '  margin: 24px auto !important;',
       '  align-self: center !important;',
       '}',
+      // Forzar contenido visible (anular animaciones opacity/transform IX2)
+      '.services-cart-wrapper .cart-services,',
+      '.services-cart-wrapper .block-up,',
+      '.services-cart-wrapper .cart-services *,',
+      '.services-cart-wrapper .block-up * {',
+      '  opacity: 1 !important;',
+      '  transform: none !important;',
+      '  visibility: visible !important;',
+      '}',
+      // Quitar transition hover de las cards
+      '.services-cart-wrapper .cart-services,',
+      '.services-cart-wrapper .cart-block-services {',
+      '  transition: none !important;',
+      '}',
+      '.services-cart-wrapper .cart-services:hover,',
+      '.services-cart-wrapper .cart-block-services:hover {',
+      '  transform: none !important;',
+      '  opacity: 1 !important;',
+      '}',
       // ===== MOBILE: services page =====
       '@media (max-width: 767px) {',
       '  .section:has(.services-cart-wrapper),',
@@ -1246,20 +1279,20 @@
       '    margin-bottom: 8px !important;',
       '  }',
       '  .section:has(.services-cart-wrapper) {',
-      '    padding-top: 12px !important;',
-      '    padding-bottom: 0 !important;',
+      '    padding-top: 10px !important;',
+      '    padding-bottom: 20px !important;',
       '  }',
       '  .section:has(.free-trial-wrapper) {',
       '    padding-top: 10px !important;',
       '    padding-bottom: 10px !important;',
       '  }',
-      // Espacio minimo entre cards y siguiente texto
-      '  .services-cart-wrapper + * {',
-      '    margin-top: 0 !important;',
-      '    padding-top: 0 !important;',
+      // ~60-80px entre cards y siguiente texto
+      '  .services-cart-wrapper {',
+      '    margin-bottom: 0 !important;',
       '  }',
       '  .section:has(.services-cart-wrapper) + .section {',
-      '    padding-top: 10px !important;',
+      '    padding-top: 30px !important;',
+      '    padding-bottom: 20px !important;',
       '  }',
       // Reducir espacio general de los .section en services mobile
       '  .section {',
