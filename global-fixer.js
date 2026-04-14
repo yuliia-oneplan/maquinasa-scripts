@@ -1368,8 +1368,8 @@
         item.id = 'asesoramiento';
         var p = item.querySelector('p, .paragraph, .text-block');
         if (p) p.textContent = 'Expertos en planificación estratégica y desarrollo de negocio para tu empresa.';
-        // "Saber mas" -> /contact-us (no hay pagina dedicada todavia)
-        if (saberMas) saberMas.setAttribute('href', '/contact-us');
+        // "Saber mas" -> /all-services#asesoramiento (ancla en la misma pagina)
+        if (saberMas) saberMas.setAttribute('href', '/all-services#asesoramiento');
       } else {
         item.style.display = 'none';
       }
