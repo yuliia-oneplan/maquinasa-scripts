@@ -949,28 +949,40 @@
     if (!/\/inmobiliaria(\/|$)/.test(location.pathname)) return;
     if (document.querySelector('.maquinasa-inmo-page-text')) return;
 
-    // El bloque debe ir DENTRO de .div-block-3 (columna izq),
-    // despues del <p> existente
-    var textCol = document.querySelector('.service-details-content-wrapper .div-block-3');
-    if (!textCol) return;
+    // Limpiar cualquier inyeccion antigua dentro de .div-block-3
+    var oldInText = document.querySelectorAll('.div-block-3 .maquinasa-inmo-page-text, .div-block-3 .maquinasa-inmobiliaria-text');
+    oldInText.forEach(function (e) { if (e.parentNode) e.parentNode.removeChild(e); });
 
-    var block = document.createElement('div');
-    block.className = 'maquinasa-inmo-page-text maquinasa-inmobiliaria-text';
+    // El bloque nuevo se inserta como hermano siguiente de
+    // .service-details-content-wrapper (ancho completo debajo)
+    var topWrapper = document.querySelector('.service-details-content-wrapper');
+    if (!topWrapper) return;
+
+    var block = document.createElement('section');
+    block.className = 'maquinasa-inmo-page-text';
     block.innerHTML = [
-      '<div class="maquinasa-svc-text-inner">',
-      '  <p>En <strong>MAQUINASA</strong>, te ayudamos a que encuentres la propiedad que se ajuste a tus necesidades, ya sea para residir, invertir o emprender tu negocio.</p>',
-      '  <ul>',
-      '    <li><strong>Compra de Inmuebles:</strong> Te acompañamos en todo el proceso de adquisición, desde la selección de inmuebles rústicos o urbanos hasta la gestión legal y trámites, asegurando una compra segura y exitosa.</li>',
-      '    <li><strong>Alquiler de Inmuebles:</strong> Ponemos a tu disposición una amplia cartera de propiedades en alquiler y te guiamos en cada paso del arrendamiento, garantizando una experiencia transparente y sin preocupaciones para inquilinos y propietarios.</li>',
-      '  </ul>',
-      '  <p>Confía en <strong>MAQUINASA</strong> para tu próxima compra o alquiler, te garantizamos la máxima profesionalidad y eficiencia.</p>',
+      '<div class="maquinasa-inmo-inner">',
+      '  <p class="maquinasa-inmo-lead">En <strong>MAQUINASA</strong>, te ayudamos a que encuentres la propiedad que se ajuste a tus necesidades, ya sea para residir, invertir o emprender tu negocio.</p>',
+      '  <div class="maquinasa-inmo-cards">',
+      '    <div class="maquinasa-inmo-card">',
+      '      <h4>Compra de Inmuebles</h4>',
+      '      <p>Te acompañamos en todo el proceso de adquisición, desde la selección de inmuebles rústicos o urbanos hasta la gestión legal y trámites, asegurando una compra segura y exitosa.</p>',
+      '    </div>',
+      '    <div class="maquinasa-inmo-card">',
+      '      <h4>Alquiler de Inmuebles</h4>',
+      '      <p>Ponemos a tu disposición una amplia cartera de propiedades en alquiler y te guiamos en cada paso del arrendamiento, garantizando una experiencia transparente y sin preocupaciones para inquilinos y propietarios.</p>',
+      '    </div>',
+      '  </div>',
+      '  <p class="maquinasa-inmo-closing">Confía en <strong>MAQUINASA</strong> para tu próxima compra o alquiler, te garantizamos la máxima profesionalidad y eficiencia.</p>',
       '</div>'
     ].join('\n');
 
-    // Insertar al final de .div-block-3 (despues del <p> existente)
-    textCol.appendChild(block);
+    // Insertar despues del wrapper texto+imagen
+    if (topWrapper.parentNode) {
+      topWrapper.parentNode.insertBefore(block, topWrapper.nextSibling);
+    }
 
-    // Hacer la imagen de la derecha mas grande (era 309px)
+    // Imagen derecha mas grande (sigue igual)
     var img = document.querySelector('.service-details-content-wrapper .image-22');
     if (img) {
       img.removeAttribute('width');
@@ -1025,6 +1037,77 @@
       '    width: 100% !important;',
       '    flex: 0 0 100% !important;',
       '  }',
+      '}',
+      // Bloque nuevo debajo del wrapper (intro centrada + 2 cards + cierre)
+      '.maquinasa-inmo-page-text {',
+      '  display: block;',
+      '  width: 100%;',
+      '  max-width: 100%;',
+      '  padding: 60px 20px;',
+      '  margin: 0 auto;',
+      '  background: #fafafa;',
+      '}',
+      '.maquinasa-inmo-inner {',
+      '  max-width: 1100px;',
+      '  margin: 0 auto;',
+      '}',
+      '.maquinasa-inmo-lead {',
+      '  text-align: center;',
+      '  font-size: 22px;',
+      '  line-height: 1.5;',
+      '  color: #184044;',
+      '  max-width: 820px;',
+      '  margin: 0 auto 40px auto;',
+      '  font-weight: 400;',
+      '}',
+      '.maquinasa-inmo-lead strong { color: #184044; font-weight: 700; }',
+      '.maquinasa-inmo-cards {',
+      '  display: grid;',
+      '  grid-template-columns: 1fr 1fr;',
+      '  gap: 24px;',
+      '  margin-bottom: 36px;',
+      '}',
+      '.maquinasa-inmo-card {',
+      '  background: #ffffff;',
+      '  border: 1px solid #e4e8ea;',
+      '  border-radius: 10px;',
+      '  padding: 28px 26px;',
+      '  transition: transform .2s ease, box-shadow .2s ease;',
+      '}',
+      '.maquinasa-inmo-card:hover {',
+      '  transform: translateY(-2px);',
+      '  box-shadow: 0 8px 24px rgba(24,64,68,.08);',
+      '}',
+      '.maquinasa-inmo-card h4 {',
+      '  font-size: 18px;',
+      '  font-weight: 700;',
+      '  color: #184044;',
+      '  margin: 0 0 12px 0;',
+      '  letter-spacing: 0.3px;',
+      '}',
+      '.maquinasa-inmo-card p {',
+      '  font-size: 15px;',
+      '  line-height: 1.55;',
+      '  color: #555;',
+      '  margin: 0;',
+      '}',
+      '.maquinasa-inmo-closing {',
+      '  text-align: center;',
+      '  font-size: 16px;',
+      '  line-height: 1.6;',
+      '  color: #555;',
+      '  max-width: 820px;',
+      '  margin: 0 auto;',
+      '}',
+      '.maquinasa-inmo-closing strong { color: #184044; }',
+      '@media (max-width: 767px) {',
+      '  .maquinasa-inmo-page-text { padding: 40px 18px; }',
+      '  .maquinasa-inmo-lead { font-size: 18px; margin-bottom: 28px; }',
+      '  .maquinasa-inmo-cards { grid-template-columns: 1fr; gap: 16px; margin-bottom: 28px; }',
+      '  .maquinasa-inmo-card { padding: 22px 20px; }',
+      '  .maquinasa-inmo-card h4 { font-size: 16px; }',
+      '  .maquinasa-inmo-card p { font-size: 14px; }',
+      '  .maquinasa-inmo-closing { font-size: 15px; }',
       '}'
     ].join('\n'));
 
