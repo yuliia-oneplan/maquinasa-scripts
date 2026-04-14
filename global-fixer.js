@@ -963,92 +963,69 @@
       });
     }
 
-    // Hover en dropdown con event delegation a nivel document
-    // (mas robusto — captura cualquier hover en cualquier .header-link
-    // aunque existan multiples o se añadan dinamicamente)
-    if (!document.documentElement.hasAttribute('data-maquinasa-dd-delegated')) {
-      document.documentElement.setAttribute('data-maquinasa-dd-delegated', '1');
-      var hoverTimers = new WeakMap();
+    // Dropdown CUSTOM: construimos uno nuevo desde cero que reemplaza
+    // visualmente al de Webflow. Asi evitamos pelear con el JS interno.
+    var headerLinks = document.querySelectorAll('.header-link');
+    headerLinks.forEach(function (hl) {
+      var dd = hl.querySelector('.w-dropdown');
+      if (!dd) return;
+      if (hl.getAttribute('data-maquinasa-custom-dd') === '1') return;
+      hl.setAttribute('data-maquinasa-custom-dd', '1');
 
-      function showList(list) {
-        if (!list) return;
-        list.style.setProperty('display', 'block', 'important');
-        list.style.setProperty('opacity', '1', 'important');
-        list.style.setProperty('visibility', 'visible', 'important');
-        list.style.setProperty('pointer-events', 'auto', 'important');
-        list.style.setProperty('transform', 'none', 'important');
-        list.style.setProperty('position', 'absolute', 'important');
-        list.style.setProperty('top', '100%', 'important');
-        list.style.setProperty('left', '0', 'important');
-        list.style.setProperty('z-index', '9999', 'important');
-        list.style.setProperty('min-width', '220px', 'important');
-        list.classList.add('w--open');
-      }
-      function hideList(list) {
-        if (!list) return;
-        list.style.removeProperty('display');
-        list.style.removeProperty('opacity');
-        list.style.removeProperty('visibility');
-        list.style.removeProperty('pointer-events');
-        list.style.removeProperty('transform');
-        list.classList.remove('w--open');
-      }
+      // Ocultar el dropdown original de Webflow para siempre
+      var originalList = dd.querySelector('.w-dropdown-list');
+      if (originalList) originalList.style.setProperty('display', 'none', 'important');
 
-      document.addEventListener('mouseover', function (e) {
-        var hl = e.target.closest('.header-link');
-        if (!hl) return;
-        var dd = hl.querySelector('.w-dropdown');
-        if (!dd) return;
-        var list = dd.querySelector('.w-dropdown-list');
-        if (!list) return;
-        // Position relative para anclar el list
-        hl.style.position = 'relative';
-        var t = hoverTimers.get(hl);
-        if (t) { clearTimeout(t); hoverTimers.delete(hl); }
-        showList(list);
-      });
+      // Construir nuestro propio menu
+      var customMenu = document.createElement('div');
+      customMenu.className = 'maquinasa-custom-menu';
+      customMenu.innerHTML = [
+        '<a href="/all-services#inmobiliaria" class="maquinasa-custom-menu-item">INMOBILIARIA</a>',
+        '<a href="/all-services#asesoramiento" class="maquinasa-custom-menu-item">ASESORAMIENTO</a>'
+      ].join('');
 
-      document.addEventListener('mouseout', function (e) {
-        var hl = e.target.closest('.header-link');
-        if (!hl) return;
-        // Si el raton sigue dentro del mismo header-link, no cerrar
-        var to = e.relatedTarget;
-        if (to && hl.contains(to)) return;
-        var dd = hl.querySelector('.w-dropdown');
-        if (!dd) return;
-        var list = dd.querySelector('.w-dropdown-list');
-        if (!list) return;
-        var timer = setTimeout(function () { hideList(list); }, 200);
-        hoverTimers.set(hl, timer);
-      });
-    }
+      hl.style.position = 'relative';
+      hl.appendChild(customMenu);
+    });
 
-    // CSS pure-hover (sin depender de JS de Webflow)
-    injectCSS('maquinasa-nav-dropdown', [
-      // Padre del dropdown debe tener position relative para anclar el hijo
-      '.w-dropdown { position: relative !important; }',
-      // Estado por defecto: ocultar dropdown list (anula display:none de Webflow)
-      '.w-dropdown-list, .dropdown-list {',
-      '  display: none !important;',
-      '  opacity: 0 !important;',
-      '  pointer-events: none !important;',
+    // CSS del menu custom
+    injectCSS('maquinasa-custom-dropdown', [
+      '.maquinasa-custom-menu {',
+      '  position: absolute;',
+      '  top: 100%;',
+      '  left: 50%;',
+      '  transform: translateX(-50%);',
+      '  background: #ffffff;',
+      '  border-radius: 8px;',
+      '  box-shadow: 0 8px 30px rgba(0,0,0,.18);',
+      '  padding: 8px 0;',
+      '  min-width: 220px;',
+      '  display: none;',
+      '  z-index: 9999;',
+      '  margin-top: 8px;',
       '}',
-      // Hover: mostrar el dropdown
-      '.w-dropdown:hover > .w-dropdown-list,',
-      '.w-dropdown:hover > .dropdown-list,',
-      '.w-dropdown:hover .w-dropdown-list,',
-      '.w-dropdown:hover .dropdown-list,',
-      '.w-dropdown.w--open > .w-dropdown-list,',
-      '.w-dropdown.w--open > .dropdown-list {',
-      '  display: block !important;',
-      '  opacity: 1 !important;',
-      '  visibility: visible !important;',
-      '  pointer-events: auto !important;',
-      '  transform: none !important;',
-      '  position: absolute !important;',
-      '  top: 100% !important;',
-      '  left: 0 !important;',
-      '  z-index: 1000 !important;',
+      '.header-link:hover .maquinasa-custom-menu,',
+      '.maquinasa-custom-menu:hover {',
+      '  display: block;',
+      '}',
+      '.maquinasa-custom-menu-item {',
+      '  display: block;',
+      '  padding: 12px 20px;',
+      '  color: #184044 !important;',
+      '  text-decoration: none !important;',
+      '  font-size: 14px;',
+      '  font-weight: 600;',
+      '  letter-spacing: 0.5px;',
+      '  transition: background 0.15s ease;',
+      '}',
+      '.maquinasa-custom-menu-item:hover {',
+      '  background: #f3f5f5;',
+      '  color: #25d366 !important;',
+      '}',
+      // Ocultar dropdown original para siempre
+      '.w-dropdown .w-dropdown-list,',
+      '.w-dropdown .dropdown-list {',
+      '  display: none !important;',
       '}'
     ].join('\n'));
   }
@@ -1061,20 +1038,23 @@
     var cards = document.querySelectorAll('.block-up');
     if (!cards.length) return;
 
-    // Renombrar cards + añadir anclas
+    // Renombrar cards + añadir anclas + actualizar hrefs de "Saber mas"
     cards.forEach(function (card) {
       var h3 = card.querySelector('h3');
       if (!h3) return;
       var text = h3.textContent.trim().toLowerCase();
-      var item = card.closest('.collection-item-service, .w-dyn-item') || card;
+      var item = card.closest('.collection-item-services-cart, .collection-item-service, .w-dyn-item') || card;
+      var saberMas = card.querySelector('a');
       if (text.indexOf('inmobiliaria') !== -1) {
         h3.textContent = 'INMOBILIARIA';
         item.id = 'inmobiliaria';
-      } else if (text.indexOf('automoci') !== -1) {
+        if (saberMas) saberMas.setAttribute('href', '#inmobiliaria');
+      } else if (text.indexOf('automoci') !== -1 || text.indexOf('asesoramiento') !== -1) {
         h3.textContent = 'ASESORAMIENTO';
         item.id = 'asesoramiento';
         var p = item.querySelector('p, .paragraph, .text-block');
         if (p) p.textContent = 'Expertos en planificación estratégica y desarrollo de negocio para tu empresa.';
+        if (saberMas) saberMas.setAttribute('href', '#asesoramiento');
       } else {
         item.style.display = 'none';
       }
@@ -1186,16 +1166,20 @@
       '    flex: 0 0 100% !important;',
       '    width: 100% !important;',
       '    max-width: 100% !important;',
-      '    height: 180px !important;',
-      '    min-height: 180px !important;',
-      '    max-height: 180px !important;',
+      '    min-height: 230px !important;',
       '  }',
       '  .services-cart-wrapper .cart-services,',
       '  .services-cart-wrapper .block-up {',
-      '    height: 100% !important;',
-      '    min-height: 100% !important;',
-      '    padding: 16px 20px !important;',
-      '    overflow: hidden !important;',
+      '    min-height: 230px !important;',
+      '    padding: 20px 20px !important;',
+      '    justify-content: center !important;',
+      '  }',
+      // Asegurar que el boton "Saber mas" se muestra
+      '  .services-cart-wrapper .block-up a,',
+      '  .services-cart-wrapper .cart-services a {',
+      '    display: inline-flex !important;',
+      '    visibility: visible !important;',
+      '    margin-top: 10px !important;',
       '  }',
       // Reducir espacio entre sub-secciones en services mobile
       '  .all-services-banner,',
