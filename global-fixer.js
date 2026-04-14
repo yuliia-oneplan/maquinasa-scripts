@@ -963,8 +963,7 @@
       });
     }
 
-    // Dropdown CUSTOM: construimos uno nuevo desde cero que reemplaza
-    // visualmente al de Webflow. Asi evitamos pelear con el JS interno.
+    // Dropdown CUSTOM: eliminamos el original y construimos uno nuevo
     var headerLinks = document.querySelectorAll('.header-link');
     headerLinks.forEach(function (hl) {
       var dd = hl.querySelector('.w-dropdown');
@@ -972,9 +971,11 @@
       if (hl.getAttribute('data-maquinasa-custom-dd') === '1') return;
       hl.setAttribute('data-maquinasa-custom-dd', '1');
 
-      // Ocultar el dropdown original de Webflow para siempre
+      // BORRAR el dropdown-list original del DOM (no solo ocultarlo)
       var originalList = dd.querySelector('.w-dropdown-list');
-      if (originalList) originalList.style.setProperty('display', 'none', 'important');
+      if (originalList && originalList.parentNode) {
+        originalList.parentNode.removeChild(originalList);
+      }
 
       // Construir nuestro propio menu
       var customMenu = document.createElement('div');
@@ -986,6 +987,22 @@
 
       hl.style.position = 'relative';
       hl.appendChild(customMenu);
+
+      // Hover con JS (mas fiable que :hover CSS en layouts complejos)
+      var hoverTimeout = null;
+      function showMenu() {
+        if (hoverTimeout) { clearTimeout(hoverTimeout); hoverTimeout = null; }
+        customMenu.style.setProperty('display', 'block', 'important');
+      }
+      function hideMenu() {
+        hoverTimeout = setTimeout(function () {
+          customMenu.style.removeProperty('display');
+        }, 200);
+      }
+      hl.addEventListener('mouseenter', showMenu);
+      hl.addEventListener('mouseleave', hideMenu);
+      customMenu.addEventListener('mouseenter', showMenu);
+      customMenu.addEventListener('mouseleave', hideMenu);
     });
 
     // CSS del menu custom
@@ -1157,16 +1174,19 @@
       '  .services-cart-wrapper {',
       '    flex-direction: column !important;',
       '    gap: 12px !important;',
-      '    padding: 0 !important;',
+      '    padding: 0 15px !important;',
       '    margin-top: -30px !important;',
+      '    margin-bottom: 0 !important;',
       '    position: relative !important;',
       '    z-index: 5 !important;',
       '  }',
       '  .services-cart-wrapper .cart-block-services {',
-      '    flex: 0 0 100% !important;',
+      '    flex: 0 0 auto !important;',
       '    width: 100% !important;',
       '    max-width: 100% !important;',
       '    min-height: 230px !important;',
+      '    margin-left: auto !important;',
+      '    margin-right: auto !important;',
       '  }',
       '  .services-cart-wrapper .cart-services,',
       '  .services-cart-wrapper .block-up {',
@@ -1218,16 +1238,24 @@
       '  }',
       '  .section:has(.services-cart-wrapper) {',
       '    padding-top: 12px !important;',
-      '    padding-bottom: 12px !important;',
+      '    padding-bottom: 0 !important;',
       '  }',
       '  .section:has(.free-trial-wrapper) {',
       '    padding-top: 10px !important;',
       '    padding-bottom: 10px !important;',
       '  }',
+      // Espacio minimo entre cards y siguiente texto
+      '  .services-cart-wrapper + * {',
+      '    margin-top: 0 !important;',
+      '    padding-top: 0 !important;',
+      '  }',
+      '  .section:has(.services-cart-wrapper) + .section {',
+      '    padding-top: 10px !important;',
+      '  }',
       // Reducir espacio general de los .section en services mobile
       '  .section {',
-      '    padding-top: 20px !important;',
-      '    padding-bottom: 20px !important;',
+      '    padding-top: 16px !important;',
+      '    padding-bottom: 16px !important;',
       '  }',
       '}',
       '.maquinasa-inmobiliaria-text {',
