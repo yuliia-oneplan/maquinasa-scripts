@@ -959,104 +959,55 @@
 
   // =====================================================================
   // /about-us — reformatear intro larga "Espacios que conectan..."
-  // en 3 mini-bloques con sub-titulos para mejor lectura
+  // partiendo el parrafo en 3 con buen espaciado, alineado a la izq
   // =====================================================================
   function fixAboutUsIntro() {
     if (!/about-us/.test(location.href)) return;
-    if (document.querySelector('.maquinasa-about-cards')) return;
+    if (document.querySelector('.maquinasa-about-intro')) return;
 
-    // Buscar el h2 "Espacios que conectan..."
     var heading = null;
     document.querySelectorAll('h2').forEach(function (h) {
       if (/Espacios que conectan/i.test(h.textContent)) heading = h;
     });
     if (!heading) return;
 
-    // El parrafo largo es el siguiente sibling del h2 (.paragraph-large.max-w)
     var paragraph = heading.parentNode.querySelector('.paragraph-large') ||
                     heading.nextElementSibling;
     if (!paragraph) return;
 
-    // Crear el nuevo bloque de 3 cards
-    var cards = document.createElement('div');
-    cards.className = 'maquinasa-about-cards';
-    cards.innerHTML = [
-      '<div class="maquinasa-about-card">',
-      '  <div class="maquinasa-about-num">01</div>',
-      '  <h4>Expertos en Murcia</h4>',
-      '  <p>En <strong>MAQUINASA</strong>, somos expertos en el sector inmobiliario, principalmente en la Región de Murcia. Ofrecemos un servicio integral que abarca desde la gestión completa de propiedades y la promoción inmobiliaria, hasta la asesoría estratégica de negocios.</p>',
-      '</div>',
-      '<div class="maquinasa-about-card">',
-      '  <div class="maquinasa-about-num">02</div>',
-      '  <h4>Amplia cartera</h4>',
-      '  <p>Te presentamos una selección exclusiva de inmuebles situados en emplazamientos estratégicos que se adaptan perfectamente a tus necesidades. Ya busques la tranquilidad de una casa de campo, parcelas agrícolas, o el local comercial ideal para emprender tu negocio.</p>',
-      '</div>',
-      '<div class="maquinasa-about-card">',
-      '  <div class="maquinasa-about-num">03</div>',
-      '  <h4>Equipo cercano</h4>',
-      '  <p>Contamos con un profundo conocimiento del mercado y un equipo especializado que te acompañará en cada paso. Nos aseguramos de que tu experiencia sea eficiente y segura, tanto si deseas comprar, alquilar, vender o arrendar tu propiedad, como si buscas asesoramiento experto.</p>',
-      '</div>'
+    // Crear bloque limpio con 3 <p> reales
+    var block = document.createElement('div');
+    block.className = 'maquinasa-about-intro';
+    block.innerHTML = [
+      '<p>En <strong>MAQUINASA</strong>, somos expertos en el sector inmobiliario, principalmente en la Región de Murcia. Ofrecemos un servicio integral que abarca desde la gestión completa de propiedades y la promoción inmobiliaria, hasta la asesoría estratégica de negocios.</p>',
+      '<p>Te presentamos una selección exclusiva de inmuebles situados en emplazamientos estratégicos que se adaptan perfectamente a tus necesidades. Ya busques la tranquilidad y el encanto de una casa de campo, parcelas agrícolas, o el local comercial ideal para emprender y hacer crecer tu negocio.</p>',
+      '<p>Contamos con un profundo conocimiento del mercado y un equipo especializado que te acompañará en cada paso. Nos aseguramos de que tu experiencia sea eficiente y segura, tanto si deseas comprar, alquilar, vender o arrendar tu propiedad, como si buscas un socio estratégico y asesoramiento experto para el desarrollo de tu proyecto inmobiliario.</p>'
     ].join('\n');
 
-    // Reemplazar el parrafo largo por las cards
-    paragraph.parentNode.replaceChild(cards, paragraph);
+    paragraph.parentNode.replaceChild(block, paragraph);
 
-    injectCSS('maquinasa-about-cards-css', [
-      // Centrar el wrapper del titulo y ensancharlo para acomodar las cards
-      '.section-title-wrapper:has(.maquinasa-about-cards) {',
-      '  max-width: 1200px !important;',
-      '  margin: 0 auto !important;',
-      '  padding: 0 20px !important;',
-      '}',
-      '.maquinasa-about-cards {',
-      '  display: grid;',
-      '  grid-template-columns: repeat(3, 1fr);',
-      '  gap: 28px;',
-      '  margin-top: 40px;',
+    injectCSS('maquinasa-about-intro-css', [
+      '.maquinasa-about-intro {',
+      '  max-width: 760px;',
+      '  margin: 32px auto 0 auto;',
       '  text-align: left;',
+      '  padding: 0 20px;',
       '}',
-      '.maquinasa-about-card {',
-      '  background: #ffffff;',
-      '  border: 1px solid #e4e8ea;',
-      '  border-radius: 12px;',
-      '  padding: 32px 28px;',
-      '  position: relative;',
-      '  transition: transform .2s ease, box-shadow .2s ease;',
+      '.maquinasa-about-intro p {',
+      '  font-size: 17px;',
+      '  line-height: 1.7;',
+      '  color: #444;',
+      '  margin: 0 0 22px 0;',
       '}',
-      '.maquinasa-about-card:hover {',
-      '  transform: translateY(-3px);',
-      '  box-shadow: 0 10px 30px rgba(24,64,68,.10);',
-      '}',
-      '.maquinasa-about-num {',
-      '  font-size: 14px;',
-      '  font-weight: 700;',
-      '  color: #25d366;',
-      '  letter-spacing: 1px;',
-      '  margin-bottom: 12px;',
-      '}',
-      '.maquinasa-about-card h4 {',
-      '  font-size: 20px;',
-      '  font-weight: 700;',
-      '  color: #184044;',
-      '  margin: 0 0 14px 0;',
-      '  line-height: 1.25;',
-      '}',
-      '.maquinasa-about-card p {',
-      '  font-size: 15px;',
-      '  line-height: 1.6;',
-      '  color: #555;',
-      '  margin: 0;',
-      '}',
-      '.maquinasa-about-card strong { color: #184044; }',
-      '@media (max-width: 991px) {',
-      '  .maquinasa-about-cards { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }',
-      '  .maquinasa-about-card { padding: 24px 22px; }',
-      '  .maquinasa-about-card h4 { font-size: 18px; }',
-      '  .maquinasa-about-card p { font-size: 14px; }',
+      '.maquinasa-about-intro p:last-child { margin-bottom: 0; }',
+      '.maquinasa-about-intro strong { color: #184044; font-weight: 700; }',
+      '@media (max-width: 767px) {',
+      '  .maquinasa-about-intro { margin-top: 24px; padding: 0 18px; }',
+      '  .maquinasa-about-intro p { font-size: 15px; line-height: 1.65; margin-bottom: 18px; }',
       '}'
     ].join('\n'));
 
-    log('about-us intro reformateado en 3 cards');
+    log('about-us intro limpia (3 parrafos)');
   }
 
   function fixInmobiliariaPage() {
