@@ -977,9 +977,12 @@
       '</div>'
     ].join('\n');
 
-    // Insertar despues del wrapper texto+imagen
-    if (topWrapper.parentNode) {
-      topWrapper.parentNode.insertBefore(block, topWrapper.nextSibling);
+    // Insertar como hermano DESPUES de la section entera (no del
+    // wrapper interno), para salir de cualquier flex container padre
+    var section = topWrapper.closest('section') || topWrapper.closest('.section');
+    var insertRef = section || topWrapper;
+    if (insertRef.parentNode) {
+      insertRef.parentNode.insertBefore(block, insertRef.nextSibling);
     }
 
     // Imagen derecha mas grande (sigue igual)
