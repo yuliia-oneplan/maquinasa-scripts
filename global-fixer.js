@@ -1057,12 +1057,14 @@
     var cards = document.querySelectorAll('.block-up');
     if (!cards.length) return;
 
-    // Ocultar .cart-block-services vacios (template placeholders sin contenido)
+    // BORRAR del DOM los .cart-block-services vacios (template placeholders)
+    // No basta con display:none porque el template puede reinsertar o
+    // el layout del flex/grid puede dejar espacio.
     var blocks = document.querySelectorAll('.cart-block-services');
     blocks.forEach(function (b) {
       var hasContent = b.querySelector('.block-up') && b.textContent.trim().length > 0;
-      if (!hasContent) {
-        b.style.display = 'none';
+      if (!hasContent && b.parentNode) {
+        b.parentNode.removeChild(b);
       }
     });
 
