@@ -994,16 +994,21 @@
       '  padding: 0 20px;',
       '}',
       '.maquinasa-about-intro p {',
-      '  font-size: 17px;',
-      '  line-height: 1.7;',
+      '  font-size: 18px;',
+      '  line-height: 1.75;',
       '  color: #444;',
-      '  margin: 0 0 22px 0;',
+      '  margin: 0 0 32px 0;',
       '}',
       '.maquinasa-about-intro p:last-child { margin-bottom: 0; }',
       '.maquinasa-about-intro strong { color: #184044; font-weight: 700; }',
+      // Acercar el .counter-wrapper (siguiente section con +10/+40/+200)
+      '.section:has(.counter-wrapper) {',
+      '  padding-top: 30px !important;',
+      '}',
       '@media (max-width: 767px) {',
       '  .maquinasa-about-intro { margin-top: 24px; padding: 0 18px; }',
-      '  .maquinasa-about-intro p { font-size: 15px; line-height: 1.65; margin-bottom: 18px; }',
+      '  .maquinasa-about-intro p { font-size: 16px; line-height: 1.7; margin-bottom: 24px; }',
+      '  .section:has(.counter-wrapper) { padding-top: 20px !important; }',
       '}'
     ].join('\n'));
 
