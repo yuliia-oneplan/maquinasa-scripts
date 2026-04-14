@@ -949,10 +949,10 @@
     if (!/\/inmobiliaria(\/|$)/.test(location.pathname)) return;
     if (document.querySelector('.maquinasa-inmo-page-text')) return;
 
-    var wrapper = document.querySelector('.service-details-content-wrapper') ||
-                  document.querySelector('.section') ||
-                  document.body;
-    if (!wrapper) return;
+    // El bloque debe ir DENTRO de .div-block-3 (columna izq),
+    // despues del <p> existente
+    var textCol = document.querySelector('.service-details-content-wrapper .div-block-3');
+    if (!textCol) return;
 
     var block = document.createElement('div');
     block.className = 'maquinasa-inmo-page-text maquinasa-inmobiliaria-text';
@@ -967,9 +967,49 @@
       '</div>'
     ].join('\n');
 
-    // Insertar al final del contenedor de contenido
-    wrapper.appendChild(block);
-    log('F9.2 /inmobiliaria text block inyectado');
+    // Insertar al final de .div-block-3 (despues del <p> existente)
+    textCol.appendChild(block);
+
+    // Hacer la imagen de la derecha mas grande (era 309px)
+    var img = document.querySelector('.service-details-content-wrapper .image-22');
+    if (img) {
+      img.removeAttribute('width');
+      img.removeAttribute('height');
+    }
+    injectCSS('maquinasa-inmo-page-css', [
+      '.service-details-content-wrapper {',
+      '  display: flex !important;',
+      '  align-items: flex-start !important;',
+      '  gap: 40px !important;',
+      '}',
+      '.service-details-content-wrapper .div-block-3 {',
+      '  flex: 1 1 55% !important;',
+      '  max-width: 60% !important;',
+      '}',
+      '.service-details-content-wrapper .image-22 {',
+      '  flex: 0 1 45% !important;',
+      '  width: 45% !important;',
+      '  max-width: 550px !important;',
+      '  height: auto !important;',
+      '  border-radius: 12px;',
+      '  box-shadow: 0 12px 40px rgba(0,0,0,.15);',
+      '  object-fit: cover;',
+      '}',
+      '@media (max-width: 767px) {',
+      '  .service-details-content-wrapper {',
+      '    flex-direction: column !important;',
+      '    gap: 24px !important;',
+      '  }',
+      '  .service-details-content-wrapper .div-block-3,',
+      '  .service-details-content-wrapper .image-22 {',
+      '    max-width: 100% !important;',
+      '    width: 100% !important;',
+      '    flex: 0 0 100% !important;',
+      '  }',
+      '}'
+    ].join('\n'));
+
+    log('F9.2 /inmobiliaria text block inyectado + imagen grande');
   }
 
   // Navbar dropdown Servicios: 2 items + abrir en hover (global)
