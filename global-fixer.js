@@ -945,6 +945,18 @@
   // =====================================================================
   // F9.2 / Task 3.2 — Inmobiliaria page: añadir bloque de texto
   // =====================================================================
+  // =====================================================================
+  // /automacion → redirect a /all-services#asesoramiento
+  // =====================================================================
+  // El template tiene una pagina /automacion con contenido de coches
+  // que ya no aplica. Ningun enlace interno apunta alli, pero si alguien
+  // teclea la URL o llega por SEO, lo redirigimos a la landing correcta.
+  function fixAutomacionRedirect() {
+    if (/\/automacion(\/|$)/.test(location.pathname)) {
+      location.replace('/all-services#asesoramiento');
+    }
+  }
+
   function fixInmobiliariaPage() {
     if (!/\/inmobiliaria(\/|$)/.test(location.pathname)) return;
     if (document.querySelector('.maquinasa-inmo-page-text')) return;
@@ -1666,6 +1678,7 @@
     fixContactGdpr();      // F5.1
     fixFloatingWhatsApp(); // F6 floating (all pages)
     fixContactLayout();    // F6 + UX contact page 2-columnas
+    fixAutomacionRedirect(); // redirect /automacion -> /all-services#asesoramiento
     fixServicesPage();     // F9 services
     fixInmobiliariaPage(); // F9.2 /inmobiliaria text block
     fixFooterLogoSize();   // F7.1
