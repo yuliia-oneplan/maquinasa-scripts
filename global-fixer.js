@@ -963,49 +963,53 @@
       });
     }
 
-    // Hover en dropdown: combinar setProperty + clase w--open + listeners
-    // en multiples elementos para ganar al JS de Webflow
-    var dropdowns = document.querySelectorAll('.w-dropdown');
-    dropdowns.forEach(function (dd) {
-      if (dd.getAttribute('data-maquinasa-hover') === '1') return;
-      dd.setAttribute('data-maquinasa-hover', '1');
-      var toggle = dd.querySelector('.w-dropdown-toggle');
+    // Hover en dropdown: atacar al .header-link padre (area grande)
+    // porque .w-dropdown en si tiene altura 0 y el :hover no se dispara
+    var headerLinks = document.querySelectorAll('.header-link');
+    headerLinks.forEach(function (hl) {
+      var dd = hl.querySelector('.w-dropdown');
+      if (!dd) return;
+      if (hl.getAttribute('data-maquinasa-hover') === '1') return;
+      hl.setAttribute('data-maquinasa-hover', '1');
       var list = dd.querySelector('.w-dropdown-list');
-      if (!toggle || !list) return;
+      var toggleAnchor = dd.querySelector('.w-dropdown-toggle a');
+      if (!list) return;
+
+      // Position relative en el header-link para poder anclar el list absoluto
+      hl.style.position = 'relative';
+
       var hoverTimeout = null;
       function show() {
-        list.classList.add('w--open');
-        toggle.classList.add('w--open');
-        toggle.setAttribute('aria-expanded', 'true');
         list.style.setProperty('display', 'block', 'important');
         list.style.setProperty('opacity', '1', 'important');
         list.style.setProperty('visibility', 'visible', 'important');
         list.style.setProperty('pointer-events', 'auto', 'important');
         list.style.setProperty('transform', 'none', 'important');
+        list.style.setProperty('position', 'absolute', 'important');
+        list.style.setProperty('top', '100%', 'important');
+        list.style.setProperty('left', '0', 'important');
+        list.style.setProperty('z-index', '9999', 'important');
+        list.style.setProperty('min-width', '200px', 'important');
+        list.classList.add('w--open');
       }
       function hide() {
-        list.classList.remove('w--open');
-        toggle.classList.remove('w--open');
-        toggle.setAttribute('aria-expanded', 'false');
         list.style.removeProperty('display');
         list.style.removeProperty('opacity');
         list.style.removeProperty('visibility');
         list.style.removeProperty('pointer-events');
         list.style.removeProperty('transform');
+        list.classList.remove('w--open');
       }
-      // Listeners en el wrapper, el toggle, y el list (cubre todos los casos)
-      [dd, toggle, list].forEach(function (el) {
-        el.addEventListener('mouseenter', function () {
-          if (hoverTimeout) { clearTimeout(hoverTimeout); hoverTimeout = null; }
-          show();
-        });
-        el.addEventListener('mouseleave', function (e) {
-          // No cerrar si vamos hacia el list o el dd
-          var to = e.relatedTarget;
-          if (to && (dd.contains(to) || to === dd)) return;
-          hoverTimeout = setTimeout(hide, 200);
-        });
+      hl.addEventListener('mouseenter', function () {
+        if (hoverTimeout) { clearTimeout(hoverTimeout); hoverTimeout = null; }
+        show();
       });
+      hl.addEventListener('mouseleave', function () {
+        hoverTimeout = setTimeout(hide, 200);
+      });
+      // Prevenir que el click en "Servicios" navegue si es <a>
+      // (dejamos click normal para accesibilidad, pero tambien mostramos
+      // el dropdown si el usuario no navega)
     });
 
     // CSS pure-hover (sin depender de JS de Webflow)
@@ -1161,9 +1165,11 @@
       '  }',
       '  .services-cart-wrapper {',
       '    flex-direction: column !important;',
-      '    gap: 16px !important;',
+      '    gap: 12px !important;',
       '    padding: 0 !important;',
-      '    margin-top: -30px !important;',
+      '    margin-top: -60px !important;',
+      '    position: relative !important;',
+      '    z-index: 5 !important;',
       '  }',
       '  .services-cart-wrapper .cart-block-services {',
       '    flex: 0 0 100% !important;',
@@ -1172,8 +1178,8 @@
       '  }',
       '  .services-cart-wrapper .cart-services,',
       '  .services-cart-wrapper .block-up {',
-      '    min-height: 220px !important;',
-      '    padding: 24px 20px !important;',
+      '    min-height: 170px !important;',
+      '    padding: 18px 20px !important;',
       '  }',
       // Reducir espacio entre sub-secciones en services mobile
       '  .all-services-banner,',
@@ -1207,14 +1213,19 @@
       '  }',
       // Reducir el doble espacio entre cards y h2 "Todos los servicios" / "Contactanos"
       '  .section-title-wrapper {',
-      '    margin-top: 20px !important;',
-      '    margin-bottom: 16px !important;',
+      '    margin-top: 12px !important;',
+      '    margin-bottom: 8px !important;',
       '  }',
       '  .section:has(.services-cart-wrapper) {',
-      '    padding-top: 20px !important;',
-      '    padding-bottom: 20px !important;',
+      '    padding-top: 12px !important;',
+      '    padding-bottom: 12px !important;',
       '  }',
       '  .section:has(.free-trial-wrapper) {',
+      '    padding-top: 10px !important;',
+      '    padding-bottom: 10px !important;',
+      '  }',
+      // Reducir espacio general de los .section en services mobile
+      '  .section {',
       '    padding-top: 20px !important;',
       '    padding-bottom: 20px !important;',
       '  }',
