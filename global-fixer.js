@@ -963,23 +963,15 @@
       });
     }
 
-    // Hover en dropdown: atacar al .header-link padre (area grande)
-    // porque .w-dropdown en si tiene altura 0 y el :hover no se dispara
-    var headerLinks = document.querySelectorAll('.header-link');
-    headerLinks.forEach(function (hl) {
-      var dd = hl.querySelector('.w-dropdown');
-      if (!dd) return;
-      if (hl.getAttribute('data-maquinasa-hover') === '1') return;
-      hl.setAttribute('data-maquinasa-hover', '1');
-      var list = dd.querySelector('.w-dropdown-list');
-      var toggleAnchor = dd.querySelector('.w-dropdown-toggle a');
-      if (!list) return;
+    // Hover en dropdown con event delegation a nivel document
+    // (mas robusto — captura cualquier hover en cualquier .header-link
+    // aunque existan multiples o se añadan dinamicamente)
+    if (!document.documentElement.hasAttribute('data-maquinasa-dd-delegated')) {
+      document.documentElement.setAttribute('data-maquinasa-dd-delegated', '1');
+      var hoverTimers = new WeakMap();
 
-      // Position relative en el header-link para poder anclar el list absoluto
-      hl.style.position = 'relative';
-
-      var hoverTimeout = null;
-      function show() {
+      function showList(list) {
+        if (!list) return;
         list.style.setProperty('display', 'block', 'important');
         list.style.setProperty('opacity', '1', 'important');
         list.style.setProperty('visibility', 'visible', 'important');
@@ -989,10 +981,11 @@
         list.style.setProperty('top', '100%', 'important');
         list.style.setProperty('left', '0', 'important');
         list.style.setProperty('z-index', '9999', 'important');
-        list.style.setProperty('min-width', '200px', 'important');
+        list.style.setProperty('min-width', '220px', 'important');
         list.classList.add('w--open');
       }
-      function hide() {
+      function hideList(list) {
+        if (!list) return;
         list.style.removeProperty('display');
         list.style.removeProperty('opacity');
         list.style.removeProperty('visibility');
@@ -1000,17 +993,35 @@
         list.style.removeProperty('transform');
         list.classList.remove('w--open');
       }
-      hl.addEventListener('mouseenter', function () {
-        if (hoverTimeout) { clearTimeout(hoverTimeout); hoverTimeout = null; }
-        show();
+
+      document.addEventListener('mouseover', function (e) {
+        var hl = e.target.closest('.header-link');
+        if (!hl) return;
+        var dd = hl.querySelector('.w-dropdown');
+        if (!dd) return;
+        var list = dd.querySelector('.w-dropdown-list');
+        if (!list) return;
+        // Position relative para anclar el list
+        hl.style.position = 'relative';
+        var t = hoverTimers.get(hl);
+        if (t) { clearTimeout(t); hoverTimers.delete(hl); }
+        showList(list);
       });
-      hl.addEventListener('mouseleave', function () {
-        hoverTimeout = setTimeout(hide, 200);
+
+      document.addEventListener('mouseout', function (e) {
+        var hl = e.target.closest('.header-link');
+        if (!hl) return;
+        // Si el raton sigue dentro del mismo header-link, no cerrar
+        var to = e.relatedTarget;
+        if (to && hl.contains(to)) return;
+        var dd = hl.querySelector('.w-dropdown');
+        if (!dd) return;
+        var list = dd.querySelector('.w-dropdown-list');
+        if (!list) return;
+        var timer = setTimeout(function () { hideList(list); }, 200);
+        hoverTimers.set(hl, timer);
       });
-      // Prevenir que el click en "Servicios" navegue si es <a>
-      // (dejamos click normal para accesibilidad, pero tambien mostramos
-      // el dropdown si el usuario no navega)
-    });
+    }
 
     // CSS pure-hover (sin depender de JS de Webflow)
     injectCSS('maquinasa-nav-dropdown', [
@@ -1167,7 +1178,7 @@
       '    flex-direction: column !important;',
       '    gap: 12px !important;',
       '    padding: 0 !important;',
-      '    margin-top: -60px !important;',
+      '    margin-top: -30px !important;',
       '    position: relative !important;',
       '    z-index: 5 !important;',
       '  }',
@@ -1175,11 +1186,16 @@
       '    flex: 0 0 100% !important;',
       '    width: 100% !important;',
       '    max-width: 100% !important;',
+      '    height: 180px !important;',
+      '    min-height: 180px !important;',
+      '    max-height: 180px !important;',
       '  }',
       '  .services-cart-wrapper .cart-services,',
       '  .services-cart-wrapper .block-up {',
-      '    min-height: 170px !important;',
-      '    padding: 18px 20px !important;',
+      '    height: 100% !important;',
+      '    min-height: 100% !important;',
+      '    padding: 16px 20px !important;',
+      '    overflow: hidden !important;',
       '  }',
       // Reducir espacio entre sub-secciones en services mobile
       '  .all-services-banner,',
