@@ -1085,10 +1085,10 @@
       '  }',
       '  .image-block-services .image-block.centered-block {',
       '    height: auto !important;',
-      '    max-height: 420px !important;',
+      '    max-height: 320px !important;',
       '    aspect-ratio: 3 / 4 !important;',
       '    transform: none !important;',
-      '    width: 85% !important;',
+      '    width: 65% !important;',
       '    margin: 0 auto !important;',
       '  }',
       // Hero /inmobiliaria: titulo que no se corta por los lados
