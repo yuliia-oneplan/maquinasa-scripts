@@ -1010,7 +1010,7 @@
       '}',
       // Separar h3 del parrafo y alinear el texto al mismo borde izq
       '.service-details-content-wrapper .div-block-3 h3 {',
-      '  margin-bottom: 28px !important;',
+      '  margin-bottom: 48px !important;',
       '}',
       '.service-details-content-wrapper .div-block-3 .paragraph-2 {',
       '  padding-left: 0 !important;',
