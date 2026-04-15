@@ -1156,11 +1156,15 @@
       '    height: auto !important;',
       '    width: auto !important;',
       '  }',
-      // Menu hamburguesa: items mucho mas juntos
+      // Menu hamburguesa: separacion del logo + tap targets decentes
+      '  .nav-menu-content .tablet-menu-logo {',
+      '    margin-bottom: 28px !important;',
+      '  }',
       '  .nav-menu-content .navigation-link {',
-      '    gap: 0 !important;',
+      '    gap: 6px !important;',
       '    display: flex !important;',
       '    flex-direction: column !important;',
+      '    margin-top: 8px !important;',
       '  }',
       '  .nav-menu-content .line-block,',
       '  .nav-menu-content .header-link,',
@@ -1171,12 +1175,17 @@
       '    width: 100% !important;',
       '  }',
       '  .nav-menu-content {',
-      '    padding-left: 20px !important;',
+      '    padding-left: 24px !important;',
+      '    padding-top: 20px !important;',
       '  }',
+      // Cada item del menu es tappeable (min 44px alto)
       '  .nav-menu-content .text-menu-header {',
-      '    padding: 4px 0 !important;',
+      '    padding: 12px 0 !important;',
       '    margin: 0 !important;',
       '    line-height: 1.3 !important;',
+      '    min-height: 44px !important;',
+      '    display: block !important;',
+      '    font-size: 18px !important;',
       '  }',
       '  .nav-menu-content .w-dropdown,',
       '  .nav-menu-content .dropdown-toggle {',
@@ -1186,6 +1195,43 @@
       '  }',
       '  .nav-menu-content .line-top {',
       '    display: none !important;',
+      '  }',
+      // Chevron visible en mobile en "Servicios"
+      '  .maquinasa-nav-chevron {',
+      '    display: inline-block !important;',
+      '    font-size: 16px !important;',
+      '    margin-left: 6px !important;',
+      '    transition: transform .2s !important;',
+      '    color: #ffbe40 !important;',
+      '  }',
+      // Custom menu (submenu) inline cuando esta abierto en mobile
+      '  .header-link .maquinasa-custom-menu {',
+      '    position: static !important;',
+      '    display: none !important;',
+      '    background: transparent !important;',
+      '    box-shadow: none !important;',
+      '    margin: 0 0 0 16px !important;',
+      '    padding: 0 !important;',
+      '    min-width: 0 !important;',
+      '  }',
+      '  .header-link.maquinasa-dd-open .maquinasa-custom-menu {',
+      '    display: block !important;',
+      '  }',
+      '  .header-link.maquinasa-dd-open .maquinasa-nav-chevron {',
+      '    transform: rotate(180deg) !important;',
+      '  }',
+      '  .maquinasa-custom-menu-item {',
+      '    padding: 10px 0 !important;',
+      '    font-size: 15px !important;',
+      '    color: #184044 !important;',
+      '    min-height: 40px !important;',
+      '  }',
+      // Anular hover-show en mobile (el control es click)
+      '  .header-link:hover .maquinasa-custom-menu {',
+      '    display: none !important;',
+      '  }',
+      '  .header-link.maquinasa-dd-open:hover .maquinasa-custom-menu {',
+      '    display: block !important;',
       '  }',
       // Banner home: reducir hueco entre navbar y contenido en mobile
       '  .home-banner-section-home-2 {',
@@ -1514,7 +1560,17 @@
       hl.style.position = 'relative';
       hl.appendChild(customMenu);
 
-      // Hover con JS (mas fiable que :hover CSS en layouts complejos)
+      // Chevron/flecha visible en mobile indicando que hay submenu
+      var toggleLink = hl.querySelector('.text-menu-header');
+      if (toggleLink && !toggleLink.querySelector('.maquinasa-nav-chevron')) {
+        var chevron = document.createElement('span');
+        chevron.className = 'maquinasa-nav-chevron';
+        chevron.innerHTML = ' ▾';
+        chevron.setAttribute('aria-hidden', 'true');
+        toggleLink.appendChild(chevron);
+      }
+
+      // Hover con JS (desktop, mas fiable que :hover CSS en layouts complejos)
       var hoverTimeout = null;
       function showMenu() {
         if (hoverTimeout) { clearTimeout(hoverTimeout); hoverTimeout = null; }
@@ -1529,10 +1585,24 @@
       hl.addEventListener('mouseleave', hideMenu);
       customMenu.addEventListener('mouseenter', showMenu);
       customMenu.addEventListener('mouseleave', hideMenu);
+
+      // Click en mobile: tocar "Servicios" expande/colapsa el submenu
+      // (en vez de navegar). En desktop deja pasar el click normalmente.
+      if (toggleLink) {
+        toggleLink.addEventListener('click', function (e) {
+          if (window.innerWidth <= 991) {
+            e.preventDefault();
+            e.stopPropagation();
+            hl.classList.toggle('maquinasa-dd-open');
+          }
+        });
+      }
     });
 
     // CSS del menu custom
     injectCSS('maquinasa-custom-dropdown', [
+      // Chevron solo visible en mobile (hamburguesa)
+      '.maquinasa-nav-chevron { display: none; }',
       '.maquinasa-custom-menu {',
       '  position: absolute !important;',
       '  top: 100% !important;',
