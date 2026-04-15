@@ -1113,11 +1113,20 @@
       '    padding-top: 20px !important;',
       '    min-height: auto !important;',
       '  }',
+      // Parrafos de "Donde la Calidad Define Cada Sector" con mas margen lateral
+      '  .section-title-right .paragraph-large {',
+      '    padding-left: 20px !important;',
+      '    padding-right: 20px !important;',
+      '  }',
       '}',
       '@media (max-width: 479px) {',
       '  .home-banner-section-home-2 {',
       '    padding-top: 16px !important;',
       '    min-height: auto !important;',
+      '  }',
+      '  .section-title-right .paragraph-large {',
+      '    padding-left: 16px !important;',
+      '    padding-right: 16px !important;',
       '  }',
       '}'
     ].join('\n'));
