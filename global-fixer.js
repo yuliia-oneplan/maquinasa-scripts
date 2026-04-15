@@ -1193,7 +1193,13 @@
       '    margin-top: 8px !important;',
       '    align-items: stretch !important;',
       '  }',
-      '  .nav-menu-content .line-block,',
+      '  .nav-menu-content .line-block {',
+      '    margin: 0 !important;',
+      '    padding: 0 !important;',
+      '    text-align: left !important;',
+      '    width: 100% !important;',
+      '    display: block !important;',
+      '  }',
       '  .nav-menu-content .header-link,',
       '  .nav-menu-content .header-link.margin {',
       '    margin: 0 !important;',
@@ -1201,9 +1207,13 @@
       '    text-align: left !important;',
       '    width: 100% !important;',
       '    position: relative !important;',
-      '    display: block !important;',
-      '    flex-direction: column !important;',
-      '    align-items: stretch !important;',
+      '    display: flex !important;',
+      '    flex-wrap: wrap !important;',
+      '    align-items: center !important;',
+      '  }',
+      '  .nav-menu-content .header-link .w-dropdown {',
+      '    flex: 0 0 auto !important;',
+      '    width: auto !important;',
       '  }',
       '  .nav-menu-content {',
       '    padding-left: 24px !important;',
@@ -1228,13 +1238,17 @@
       '    display: none !important;',
       '  }',
       '  .nav-menu-content .maquinasa-nav-chevron {',
-      '    display: block !important;',
-      '    position: absolute !important;',
-      '    top: 8px !important;',
-      '    left: 135px !important;',
-      '    font-size: 48px !important;',
+      '    display: inline-flex !important;',
+      '    align-items: center !important;',
+      '    justify-content: center !important;',
+      '    position: static !important;',
+      '    flex: 0 0 auto !important;',
+      '    font-size: 44px !important;',
       '    line-height: 1 !important;',
-      '    padding: 0 10px !important;',
+      '    padding: 0 8px !important;',
+      '    margin-left: 4px !important;',
+      '    min-height: 44px !important;',
+      '    min-width: 44px !important;',
       '    transition: transform .2s !important;',
       '    color: #ffbe40 !important;',
       '    font-weight: 700 !important;',
@@ -1242,7 +1256,9 @@
       '    z-index: 10 !important;',
       '    user-select: none !important;',
       '  }',
-      // Submenu: debajo de "Servicios", ancho completo del menu hamburguesa
+      // Submenu: flex 100% para que se envuelva debajo en su propia fila.
+      // display lo controla el handler con inline style !important (gana
+      // por especificidad inline + !important sobre cualquier regla CSS).
       '  .nav-menu-content .header-link .maquinasa-custom-menu {',
       '    position: static !important;',
       '    display: none !important;',
@@ -1252,7 +1268,8 @@
       '    border-radius: 8px !important;',
       '    margin: 6px 24px 10px 0 !important;',
       '    padding: 6px 0 !important;',
-      '    width: auto !important;',
+      '    flex: 0 0 100% !important;',
+      '    width: 100% !important;',
       '    max-width: none !important;',
       '    min-width: 240px !important;',
       '    top: auto !important;',
@@ -1260,7 +1277,7 @@
       '    right: auto !important;',
       '    transform: none !important;',
       '    float: none !important;',
-      '    clear: both !important;',
+      '    order: 99 !important;',
       '  }',
       '  .nav-menu-content .header-link.maquinasa-dd-open .maquinasa-custom-menu {',
       '    display: block !important;',
@@ -1638,26 +1655,26 @@
       customMenu.addEventListener('mouseenter', showMenu);
       customMenu.addEventListener('mouseleave', hideMenu);
 
-      // Click en mobile: tocar "Servicios" expande/colapsa el submenu
-      // (en vez de navegar). En desktop deja pasar el click normalmente.
+      // Apuntar "Servicios" al ancla de asesoramiento (navega normal)
       if (toggleLink) {
-        toggleLink.addEventListener('click', function (e) {
-          if (window.innerWidth <= 991) {
-            e.preventDefault();
-            e.stopPropagation();
-            hl.classList.toggle('maquinasa-dd-open');
-          }
-        });
+        toggleLink.setAttribute('href', '/all-services#asesoramiento');
       }
-      // Click directo en la flecha siempre togglea (garantiza cerrar
-      // incluso si Webflow intercepta el click del link padre)
+      // Click en la flecha: toggle via INLINE STYLE para garantizar
+      // maxima especificidad (imposible de sobreescribir por CSS).
       var chevronEl = hl.querySelector('.maquinasa-nav-chevron');
       if (chevronEl) {
         chevronEl.addEventListener('click', function (e) {
           e.preventDefault();
           e.stopPropagation();
-          hl.classList.toggle('maquinasa-dd-open');
-        }, true);
+          var isOpen = customMenu.style.display === 'block';
+          if (isOpen) {
+            customMenu.style.setProperty('display', 'none', 'important');
+            chevronEl.style.transform = 'none';
+          } else {
+            customMenu.style.setProperty('display', 'block', 'important');
+            chevronEl.style.transform = 'rotate(180deg)';
+          }
+        });
       }
     });
 
