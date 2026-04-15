@@ -1227,16 +1227,20 @@
       '  .nav-menu-content .line-top {',
       '    display: none !important;',
       '  }',
-      '  .maquinasa-nav-chevron {',
-      '    display: inline-block !important;',
-      '    font-size: 52px !important;',
-      '    line-height: .5 !important;',
-      '    margin-left: 2px !important;',
+      '  .nav-menu-content .maquinasa-nav-chevron {',
+      '    display: block !important;',
+      '    position: absolute !important;',
+      '    top: 8px !important;',
+      '    left: 135px !important;',
+      '    font-size: 48px !important;',
+      '    line-height: 1 !important;',
+      '    padding: 0 10px !important;',
       '    transition: transform .2s !important;',
       '    color: #ffbe40 !important;',
       '    font-weight: 700 !important;',
-      '    vertical-align: middle !important;',
       '    cursor: pointer !important;',
+      '    z-index: 10 !important;',
+      '    user-select: none !important;',
       '  }',
       // Submenu: debajo de "Servicios", ancho completo del menu hamburguesa
       '  .nav-menu-content .header-link .maquinasa-custom-menu {',
@@ -1605,14 +1609,17 @@
       hl.style.position = 'relative';
       hl.appendChild(customMenu);
 
-      // Chevron/flecha visible en mobile indicando que hay submenu
+      // Chevron/flecha FUERA del <a> para que su click no dispare el
+      // handler del link padre. Se inserta como hijo directo de
+      // .header-link y se posiciona via CSS (desktop: hidden, mobile: inline)
       var toggleLink = hl.querySelector('.text-menu-header');
-      if (toggleLink && !toggleLink.querySelector('.maquinasa-nav-chevron')) {
+      if (!hl.querySelector('.maquinasa-nav-chevron')) {
         var chevron = document.createElement('span');
         chevron.className = 'maquinasa-nav-chevron';
-        chevron.innerHTML = ' ▾';
-        chevron.setAttribute('aria-hidden', 'true');
-        toggleLink.appendChild(chevron);
+        chevron.setAttribute('role', 'button');
+        chevron.setAttribute('aria-label', 'Abrir submenu Servicios');
+        chevron.innerHTML = '▾';
+        hl.appendChild(chevron);
       }
 
       // Hover con JS (desktop, mas fiable que :hover CSS en layouts complejos)
