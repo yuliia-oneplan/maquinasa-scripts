@@ -1324,8 +1324,551 @@
     log('Home styling aplicado');
   }
 
+  // =====================================================================
+  // F9.3 + F9.4 — Propiedades inmobiliarias
+  // =====================================================================
+  // Array sincronizado con la coleccion Propiedades del CMS Webflow
+  // (69d8f1c0f44d617510e75c67). Cuando el admin-panel se despliegue en
+  // Vercel, este array desaparece y se lee en vivo via fetch a
+  // /api/propiedad?all=1.
+  var PROPIEDADES = [
+    {
+      slug: 'terreno-rustico-jumilla',
+      nombre: 'Terreno rústico Jumilla',
+      descripcionCorta: 'Finca agrícola de 90,91 ha con lechugas, almendros, olivo y viña. 2 pantanos y 2 cabezales de riego.',
+      descripcionLarga: [
+        '<p>Terreno rústico de 90,91 hectáreas en la Sierra del Carche, Jumilla. Finca en plena producción con cultivos diversificados y equipamiento hidráulico de primer nivel.</p>',
+        '<h3>Detalle de los cultivos</h3>',
+        '<ul>',
+        '  <li>71,91 hectáreas de lechugas, brócoli y aromáticas</li>',
+        '  <li>13 hectáreas de almendros</li>',
+        '  <li>3 hectáreas de olivo</li>',
+        '  <li>3 hectáreas de viña</li>',
+        '</ul>',
+        '<h3>Equipamiento hídrico</h3>',
+        '<ul>',
+        '  <li>1 pantano de 50.000 m³</li>',
+        '  <li>1 pantano de 20.000 m³</li>',
+        '  <li>2 cabezales de riego con tuberías extendidas por toda la zona de cultivo</li>',
+        '  <li>280 acciones de agua con suministro de 964,40 m³/día</li>',
+        '</ul>'
+      ].join('\n'),
+      ubicacion: 'Polígono 34 y 35. Jumilla. Sierra del Carche',
+      medidas: 'Superficie total 90,91 hectáreas',
+      precio: 'Consulta',
+      disponibilidad: 'Si',
+      modalidadCompra: true,
+      modalidadVenta: true,
+      imagenPrincipal: '',
+      galeria: [],
+      destacada: true
+    }
+    // Añadir aquí las 24 propiedades restantes cuando el cliente envíe datos
+  ];
+
+  // Placeholder SVG (icono terreno/casa) cuando no hay imagen todavia
+  var PROP_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'><rect width='800' height='600' fill='%23204e51'/><g fill='none' stroke='%23ffbe40' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'><path d='M200 380l200-160 200 160v120H200z'/><path d='M340 500v-80h120v80'/><circle cx='400' cy='450' r='6' fill='%23ffbe40'/></g><text x='400' y='560' font-family='Arial,sans-serif' font-size='22' fill='%23ffbe40' text-anchor='middle' font-weight='600'>Imagen pendiente</text></svg>";
+
+  function escapeHTML(s) {
+    return String(s || '').replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  // F9.3 — Carousel de propiedades destacadas en /inmobiliaria
+  // Reemplaza las 3 fotos finales (.image-block-services) con un grid
+  // de cards de propiedades marcadas como destacada:true
+  function fixInmobiliariaCarousel() {
+    if (!/\/inmobiliaria(\/|$)/.test(location.pathname)) return;
+    // Si hay ?p= es vista detalle, no pintar lista
+    if (new URLSearchParams(location.search).get('p')) return;
+    if (document.querySelector('.maquinasa-prop-carousel')) return;
+
+    var host = document.querySelector('.image-block-services');
+    if (!host) return;
+
+    var destacadas = PROPIEDADES.filter(function (p) { return p.destacada; });
+    if (!destacadas.length) return;
+
+    var section = document.createElement('section');
+    section.className = 'maquinasa-prop-carousel';
+
+    var cards = destacadas.map(function (p) {
+      var img = p.imagenPrincipal || PROP_PLACEHOLDER;
+      return [
+        '<a href="/inmobiliaria?p=' + encodeURIComponent(p.slug) + '" class="maquinasa-prop-card">',
+        '  <div class="maquinasa-prop-img" style="background-image:url(\'' + img + '\')"></div>',
+        '  <div class="maquinasa-prop-body">',
+        '    <h3>' + escapeHTML(p.nombre) + '</h3>',
+        '    <p class="maquinasa-prop-loc">📍 ' + escapeHTML(p.ubicacion) + '</p>',
+        '    <p class="maquinasa-prop-desc">' + escapeHTML(p.descripcionCorta) + '</p>',
+        '    <div class="maquinasa-prop-footer">',
+        '      <span class="maquinasa-prop-precio">' + escapeHTML(p.precio) + '</span>',
+        '      <span class="maquinasa-prop-cta">Ver detalle →</span>',
+        '    </div>',
+        '  </div>',
+        '</a>'
+      ].join('');
+    }).join('');
+
+    section.innerHTML = [
+      '<div class="maquinasa-prop-carousel-inner">',
+      '  <h2>Propiedades destacadas</h2>',
+      '  <p class="maquinasa-prop-subtitle">Descubre nuestra selección de inmuebles en venta y alquiler</p>',
+      '  <div class="maquinasa-prop-cards">',
+      cards,
+      '  </div>',
+      '</div>'
+    ].join('\n');
+
+    host.parentNode.replaceChild(section, host);
+
+    injectCSS('maquinasa-prop-carousel-css', [
+      '.maquinasa-prop-carousel {',
+      '  background: #f6f7f8;',
+      '  padding: 80px 20px;',
+      '  font-family: inherit;',
+      '}',
+      '.maquinasa-prop-carousel-inner { max-width: 1200px; margin: 0 auto; }',
+      '.maquinasa-prop-carousel h2 {',
+      '  font-size: 36px; color: #0c2134; margin: 0 0 8px 0;',
+      '  text-align: center; font-weight: 700;',
+      '}',
+      '.maquinasa-prop-subtitle {',
+      '  text-align: center; color: #5a6570;',
+      '  font-size: 16px; margin: 0 0 40px 0;',
+      '}',
+      '.maquinasa-prop-cards {',
+      '  display: grid;',
+      '  grid-template-columns: repeat(3, 1fr);',
+      '  gap: 28px;',
+      '}',
+      '.maquinasa-prop-card {',
+      '  background: #fff;',
+      '  border-radius: 14px;',
+      '  overflow: hidden;',
+      '  box-shadow: 0 2px 12px rgba(12,33,52,0.08);',
+      '  transition: transform .3s, box-shadow .3s;',
+      '  text-decoration: none !important;',
+      '  color: inherit;',
+      '  display: flex; flex-direction: column;',
+      '}',
+      '.maquinasa-prop-card:hover {',
+      '  transform: translateY(-6px);',
+      '  box-shadow: 0 16px 40px rgba(255,190,64,0.32), 0 4px 12px rgba(12,33,52,0.12);',
+      '}',
+      '.maquinasa-prop-img {',
+      '  width: 100%;',
+      '  aspect-ratio: 4 / 3;',
+      '  background-size: cover;',
+      '  background-position: center;',
+      '  background-color: #204e51;',
+      '}',
+      '.maquinasa-prop-body { padding: 22px 24px 20px; display: flex; flex-direction: column; flex: 1; }',
+      '.maquinasa-prop-body h3 {',
+      '  font-size: 18px; color: #0c2134;',
+      '  margin: 0 0 8px 0; font-weight: 700; line-height: 1.3;',
+      '}',
+      '.maquinasa-prop-loc {',
+      '  font-size: 13px; color: #5a6570;',
+      '  margin: 0 0 12px 0;',
+      '}',
+      '.maquinasa-prop-desc {',
+      '  font-size: 14px; line-height: 1.55; color: #4a5560;',
+      '  margin: 0 0 18px 0; flex: 1;',
+      '}',
+      '.maquinasa-prop-footer {',
+      '  display: flex; justify-content: space-between; align-items: center;',
+      '  padding-top: 14px; border-top: 1px solid #eef0f2;',
+      '}',
+      '.maquinasa-prop-precio {',
+      '  font-size: 16px; font-weight: 700; color: #204e51;',
+      '}',
+      '.maquinasa-prop-cta {',
+      '  font-size: 13px; color: #ffbe40; font-weight: 700;',
+      '  text-transform: uppercase; letter-spacing: .5px;',
+      '}',
+      '@media (max-width: 991px) {',
+      '  .maquinasa-prop-cards { grid-template-columns: repeat(2, 1fr); gap: 20px; }',
+      '}',
+      '@media (max-width: 767px) {',
+      '  .maquinasa-prop-carousel { padding: 50px 16px; }',
+      '  .maquinasa-prop-carousel h2 { font-size: 28px; }',
+      '  .maquinasa-prop-cards { grid-template-columns: 1fr; gap: 18px; }',
+      '  .maquinasa-prop-body { padding: 18px 20px 16px; }',
+      '}'
+    ].join('\n'));
+
+    log('F9.3 carousel propiedades aplicado (' + destacadas.length + ')');
+  }
+
+  // F9.4 — Vista detalle de propiedad: /inmobiliaria?p={slug}
+  // Limpia el DOM entre nav y footer e inyecta la ficha completa
+  function fixPropiedadDetalle() {
+    if (!/\/inmobiliaria(\/|$)/.test(location.pathname)) return;
+    var slug = new URLSearchParams(location.search).get('p');
+    if (!slug) return;
+    if (document.querySelector('.maquinasa-prop-detalle')) return;
+
+    var prop = PROPIEDADES.find(function (p) { return p.slug === slug; });
+
+    var nav = document.querySelector('.navbar-second');
+    var footer = document.querySelector('.footer');
+    if (!nav || !footer) { log('F9.4: nav o footer no encontrados'); return; }
+    var navTop = nav;
+    while (navTop.parentNode && navTop.parentNode !== footer.parentNode) {
+      navTop = navTop.parentNode;
+    }
+    if (!navTop.parentNode) return;
+    var cursor = navTop.nextSibling;
+    while (cursor && cursor !== footer) {
+      var next = cursor.nextSibling;
+      if (cursor.nodeType === 1) cursor.parentNode.removeChild(cursor);
+      cursor = next;
+    }
+
+    var section = document.createElement('section');
+    section.className = 'maquinasa-prop-detalle';
+
+    if (!prop) {
+      section.innerHTML = [
+        '<div class="maquinasa-prop-404">',
+        '  <h1>Propiedad no encontrada</h1>',
+        '  <p>La propiedad que buscas no existe o ya no está disponible.</p>',
+        '  <a href="/inmobiliaria" class="maquinasa-prop-volver">← Volver al listado</a>',
+        '</div>'
+      ].join('');
+      footer.parentNode.insertBefore(section, footer);
+      injectCSS('maquinasa-prop-detalle-css', buildDetalleCSS());
+      return;
+    }
+
+    var galeria = (prop.galeria && prop.galeria.length) ? prop.galeria :
+      [prop.imagenPrincipal || PROP_PLACEHOLDER];
+    var mainImg = galeria[0];
+    var thumbs = galeria.map(function (url, i) {
+      return '<img src="' + url + '" class="maquinasa-prop-thumb ' + (i === 0 ? 'active' : '') + '" data-idx="' + i + '" alt="">';
+    }).join('');
+
+    var mailtoPrecio = 'mailto:administracion@maquinasa.com?subject=' +
+      encodeURIComponent('Consulta precio — ' + prop.nombre);
+    var waLink = 'https://wa.me/34637038528?text=' +
+      encodeURIComponent('Hola, me interesa la propiedad: ' + prop.nombre);
+
+    section.innerHTML = [
+      '<div class="maquinasa-prop-detalle-inner">',
+      '  <a href="/inmobiliaria" class="maquinasa-prop-volver">← Volver a propiedades</a>',
+      '  <header class="maquinasa-prop-header">',
+      '    <h1>' + escapeHTML(prop.nombre) + '</h1>',
+      '    <p class="maquinasa-prop-header-loc">📍 ' + escapeHTML(prop.ubicacion) + '</p>',
+      '  </header>',
+      '  <div class="maquinasa-prop-layout">',
+      '    <div class="maquinasa-prop-gallery">',
+      '      <div class="maquinasa-prop-main-img">',
+      '        <img src="' + mainImg + '" alt="' + escapeHTML(prop.nombre) + '" class="maquinasa-prop-main">',
+      '        ' + (galeria.length > 1 ? '<button class="maquinasa-prop-nav prev" aria-label="Anterior">‹</button><button class="maquinasa-prop-nav next" aria-label="Siguiente">›</button>' : ''),
+      '      </div>',
+      '      ' + (galeria.length > 1 ? '<div class="maquinasa-prop-thumbs">' + thumbs + '</div>' : ''),
+      '    </div>',
+      '    <aside class="maquinasa-prop-info">',
+      '      <div class="maquinasa-prop-precio-box">',
+      '        <span class="maquinasa-prop-precio-label">Precio</span>',
+      '        <strong class="maquinasa-prop-precio-val">' + escapeHTML(prop.precio) + '</strong>',
+      '        <a href="' + mailtoPrecio + '" class="maquinasa-prop-btn-precio">Pedir precio</a>',
+      '      </div>',
+      '      <div class="maquinasa-prop-meta">',
+      '        <div class="maquinasa-prop-meta-row">',
+      '          <label>Medidas</label>',
+      '          <span>' + escapeHTML(prop.medidas) + '</span>',
+      '        </div>',
+      '        <div class="maquinasa-prop-meta-row">',
+      '          <label>Disponibilidad</label>',
+      '          <select class="maquinasa-prop-disp">',
+      '            <option value="Si"' + (prop.disponibilidad === 'Si' ? ' selected' : '') + '>Sí</option>',
+      '            <option value="No"' + (prop.disponibilidad === 'No' ? ' selected' : '') + '>No</option>',
+      '            <option value="Proximamente"' + (prop.disponibilidad === 'Proximamente' ? ' selected' : '') + '>Próximamente</option>',
+      '          </select>',
+      '        </div>',
+      '        <div class="maquinasa-prop-meta-row">',
+      '          <label>Modalidad</label>',
+      '          <div class="maquinasa-prop-modalidad">',
+      '            <label class="maquinasa-prop-check"><input type="checkbox"' + (prop.modalidadCompra ? ' checked' : '') + '> Compra</label>',
+      '            <label class="maquinasa-prop-check"><input type="checkbox"' + (prop.modalidadVenta ? ' checked' : '') + '> Venta</label>',
+      '          </div>',
+      '        </div>',
+      '      </div>',
+      '      <a href="' + waLink + '" target="_blank" rel="noopener" class="maquinasa-prop-btn-wa">',
+      '        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.3c-.3-.2-1.8-.9-2.1-1s-.5-.2-.7.2-.8 1-.9 1.2-.3.2-.6 0c-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1s0-.5.2-.6c.1-.1.3-.3.5-.5s.2-.3.3-.6.1-.4 0-.6c-.1-.2-.7-1.7-.9-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.2 3.1 1.3 3.3c.1.2 2.3 3.5 5.6 4.9 2 .8 2.8.9 3.8.7.6-.1 1.8-.7 2-1.5s.2-1.3.2-1.5c-.1-.2-.3-.2-.6-.4zM12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.3A10 10 0 1 0 12 2zm6 15.8a8.3 8.3 0 0 1-9.3 1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.3 8.3 0 1 1 18 17.8z"/></svg>',
+      '        Contactar por WhatsApp',
+      '      </a>',
+      '    </aside>',
+      '  </div>',
+      '  <div class="maquinasa-prop-descripcion">',
+      '    <h2>Descripción</h2>',
+      '    <div class="maquinasa-prop-desc-body">' + prop.descripcionLarga + '</div>',
+      '  </div>',
+      '  <div class="maquinasa-prop-contacto">',
+      '    <h2>¿Te interesa esta propiedad?</h2>',
+      '    <p>Déjanos tus datos y un asesor se pondrá en contacto contigo.</p>',
+      '    <form class="maquinasa-prop-form" novalidate>',
+      '      <div class="maquinasa-prop-form-row">',
+      '        <input type="text" name="nombre" placeholder="Nombre completo *" required>',
+      '        <input type="email" name="email" placeholder="Email *" required>',
+      '      </div>',
+      '      <input type="tel" name="telefono" placeholder="Teléfono">',
+      '      <textarea name="mensaje" placeholder="Cuéntanos qué necesitas saber" rows="5"></textarea>',
+      '      <button type="submit" class="maquinasa-prop-form-submit">Enviar consulta</button>',
+      '    </form>',
+      '  </div>',
+      '</div>'
+    ].join('\n');
+
+    footer.parentNode.insertBefore(section, footer);
+    injectCSS('maquinasa-prop-detalle-css', buildDetalleCSS());
+
+    // Wire galeria (thumbs + prev/next)
+    if (galeria.length > 1) {
+      var mainImgEl = section.querySelector('.maquinasa-prop-main');
+      var thumbEls = section.querySelectorAll('.maquinasa-prop-thumb');
+      var currentIdx = 0;
+      function showImg(i) {
+        currentIdx = (i + galeria.length) % galeria.length;
+        mainImgEl.src = galeria[currentIdx];
+        thumbEls.forEach(function (t, idx) {
+          t.classList.toggle('active', idx === currentIdx);
+        });
+      }
+      thumbEls.forEach(function (t) {
+        t.addEventListener('click', function () { showImg(parseInt(t.dataset.idx, 10)); });
+      });
+      var prev = section.querySelector('.maquinasa-prop-nav.prev');
+      var next = section.querySelector('.maquinasa-prop-nav.next');
+      if (prev) prev.addEventListener('click', function () { showImg(currentIdx - 1); });
+      if (next) next.addEventListener('click', function () { showImg(currentIdx + 1); });
+    }
+
+    // Wire contact form: submit -> mailto con datos
+    var form = section.querySelector('.maquinasa-prop-form');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var fd = new FormData(form);
+        var nombre = fd.get('nombre') || '';
+        var email = fd.get('email') || '';
+        var telefono = fd.get('telefono') || '';
+        var mensaje = fd.get('mensaje') || '';
+        if (!nombre || !email) {
+          alert('Por favor completa nombre y email.');
+          return;
+        }
+        var body = [
+          'Propiedad: ' + prop.nombre,
+          'URL: ' + location.href,
+          '',
+          'Nombre: ' + nombre,
+          'Email: ' + email,
+          'Teléfono: ' + telefono,
+          '',
+          'Mensaje:',
+          mensaje
+        ].join('\n');
+        var mailto = 'mailto:administracion@maquinasa.com' +
+          '?subject=' + encodeURIComponent('Consulta sobre ' + prop.nombre) +
+          '&body=' + encodeURIComponent(body);
+        window.location.href = mailto;
+      });
+    }
+
+    log('F9.4 detalle propiedad renderizado: ' + slug);
+  }
+
+  function buildDetalleCSS() {
+    return [
+      '.maquinasa-prop-detalle {',
+      '  background: #f6f7f8;',
+      '  font-family: inherit;',
+      '  padding: 40px 20px 80px;',
+      '  min-height: 60vh;',
+      '}',
+      '.maquinasa-prop-detalle-inner { max-width: 1200px; margin: 0 auto; }',
+      '.maquinasa-prop-volver {',
+      '  display: inline-block; color: #204e51; font-weight: 700;',
+      '  text-decoration: none; margin-bottom: 24px; font-size: 15px;',
+      '  border-bottom: 2px solid transparent; transition: border-color .2s;',
+      '}',
+      '.maquinasa-prop-volver:hover { border-bottom-color: #ffbe40; }',
+      '.maquinasa-prop-header { margin-bottom: 32px; }',
+      '.maquinasa-prop-header h1 {',
+      '  font-size: 40px; color: #0c2134; margin: 0 0 8px 0; font-weight: 700; line-height: 1.2;',
+      '}',
+      '.maquinasa-prop-header-loc { font-size: 16px; color: #5a6570; margin: 0; }',
+      '.maquinasa-prop-layout {',
+      '  display: grid;',
+      '  grid-template-columns: 1.4fr 1fr;',
+      '  gap: 40px;',
+      '  margin-bottom: 50px;',
+      '}',
+      '.maquinasa-prop-gallery {}',
+      '.maquinasa-prop-main-img {',
+      '  position: relative; width: 100%; aspect-ratio: 4/3;',
+      '  border-radius: 14px; overflow: hidden;',
+      '  background: #204e51;',
+      '  box-shadow: 0 4px 20px rgba(12,33,52,0.12);',
+      '}',
+      '.maquinasa-prop-main { width: 100%; height: 100%; object-fit: cover; display: block; }',
+      '.maquinasa-prop-nav {',
+      '  position: absolute; top: 50%; transform: translateY(-50%);',
+      '  background: rgba(12,33,52,0.6); color: #fff; border: none;',
+      '  width: 44px; height: 44px; border-radius: 50%; font-size: 28px;',
+      '  cursor: pointer; display: flex; align-items: center; justify-content: center;',
+      '  transition: background .2s;',
+      '}',
+      '.maquinasa-prop-nav:hover { background: #ffbe40; color: #204e51; }',
+      '.maquinasa-prop-nav.prev { left: 14px; }',
+      '.maquinasa-prop-nav.next { right: 14px; }',
+      '.maquinasa-prop-thumbs {',
+      '  display: flex; gap: 10px; margin-top: 14px;',
+      '  overflow-x: auto; scroll-behavior: smooth;',
+      '}',
+      '.maquinasa-prop-thumb {',
+      '  width: 90px; height: 68px; object-fit: cover;',
+      '  border-radius: 8px; cursor: pointer; opacity: .6;',
+      '  transition: opacity .2s, transform .2s; flex: 0 0 auto;',
+      '  border: 2px solid transparent;',
+      '}',
+      '.maquinasa-prop-thumb.active, .maquinasa-prop-thumb:hover {',
+      '  opacity: 1; border-color: #ffbe40;',
+      '}',
+      '.maquinasa-prop-info { display: flex; flex-direction: column; gap: 20px; }',
+      '.maquinasa-prop-precio-box {',
+      '  background: #fff; border-radius: 14px; padding: 24px;',
+      '  box-shadow: 0 4px 16px rgba(12,33,52,0.08);',
+      '  border-top: 4px solid #ffbe40;',
+      '}',
+      '.maquinasa-prop-precio-label {',
+      '  display: block; font-size: 12px; color: #7a8a94;',
+      '  text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px;',
+      '}',
+      '.maquinasa-prop-precio-val {',
+      '  display: block; font-size: 32px; color: #204e51; font-weight: 700; margin-bottom: 16px;',
+      '}',
+      '.maquinasa-prop-btn-precio {',
+      '  display: inline-block; padding: 12px 22px;',
+      '  background: #204e51; color: #fff !important;',
+      '  border-radius: 8px; text-decoration: none !important;',
+      '  font-weight: 700; font-size: 14px;',
+      '  transition: background .2s;',
+      '}',
+      '.maquinasa-prop-btn-precio:hover { background: #ffbe40; color: #204e51 !important; }',
+      '.maquinasa-prop-meta {',
+      '  background: #fff; border-radius: 14px; padding: 22px 24px;',
+      '  box-shadow: 0 2px 12px rgba(12,33,52,0.06);',
+      '}',
+      '.maquinasa-prop-meta-row {',
+      '  padding: 12px 0; border-bottom: 1px solid #eef0f2;',
+      '}',
+      '.maquinasa-prop-meta-row:last-child { border-bottom: none; }',
+      '.maquinasa-prop-meta-row label {',
+      '  display: block; font-size: 11px; color: #7a8a94;',
+      '  text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; font-weight: 600;',
+      '}',
+      '.maquinasa-prop-meta-row span { font-size: 15px; color: #0c2134; }',
+      '.maquinasa-prop-disp {',
+      '  width: 100%; padding: 10px 12px; font-size: 15px;',
+      '  border: 1px solid #d4d8dd; border-radius: 8px; background: #fff; color: #0c2134;',
+      '}',
+      '.maquinasa-prop-modalidad { display: flex; gap: 18px; }',
+      '.maquinasa-prop-check {',
+      '  display: flex !important; align-items: center; gap: 8px;',
+      '  font-size: 15px; color: #0c2134; cursor: pointer;',
+      '  text-transform: none; letter-spacing: 0; margin: 0; font-weight: 500;',
+      '}',
+      '.maquinasa-prop-check input { width: 18px; height: 18px; accent-color: #204e51; }',
+      '.maquinasa-prop-btn-wa {',
+      '  display: flex; align-items: center; justify-content: center; gap: 10px;',
+      '  background: #25d366; color: #fff !important;',
+      '  padding: 14px 20px; border-radius: 10px;',
+      '  text-decoration: none !important; font-weight: 700; font-size: 15px;',
+      '  transition: background .2s;',
+      '}',
+      '.maquinasa-prop-btn-wa:hover { background: #1fae52; }',
+      '.maquinasa-prop-descripcion {',
+      '  background: #fff; border-radius: 14px; padding: 36px 40px;',
+      '  box-shadow: 0 2px 12px rgba(12,33,52,0.06); margin-bottom: 40px;',
+      '}',
+      '.maquinasa-prop-descripcion h2 {',
+      '  font-size: 24px; color: #0c2134; margin: 0 0 18px 0; font-weight: 700;',
+      '}',
+      '.maquinasa-prop-desc-body {',
+      '  font-size: 16px; line-height: 1.75; color: #4a5560;',
+      '}',
+      '.maquinasa-prop-desc-body h3 {',
+      '  font-size: 18px; color: #204e51; margin: 28px 0 12px 0; font-weight: 700;',
+      '}',
+      '.maquinasa-prop-desc-body ul { padding-left: 22px; margin: 0 0 16px 0; }',
+      '.maquinasa-prop-desc-body li { margin-bottom: 8px; }',
+      '.maquinasa-prop-desc-body p { margin: 0 0 16px 0; }',
+      '.maquinasa-prop-contacto {',
+      '  background: linear-gradient(135deg, #204e51 0%, #0c2134 100%);',
+      '  color: #fff; border-radius: 14px; padding: 44px 40px;',
+      '}',
+      '.maquinasa-prop-contacto h2 {',
+      '  font-size: 28px; margin: 0 0 6px 0; color: #ffbe40; font-weight: 700;',
+      '}',
+      '.maquinasa-prop-contacto > p { margin: 0 0 26px 0; color: #d8dde2; font-size: 15px; }',
+      '.maquinasa-prop-form { display: flex; flex-direction: column; gap: 14px; }',
+      '.maquinasa-prop-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }',
+      '.maquinasa-prop-form input,',
+      '.maquinasa-prop-form textarea {',
+      '  width: 100%; padding: 14px 16px; font-size: 15px;',
+      '  border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;',
+      '  background: rgba(255,255,255,0.08); color: #fff;',
+      '  font-family: inherit; box-sizing: border-box;',
+      '}',
+      '.maquinasa-prop-form input::placeholder,',
+      '.maquinasa-prop-form textarea::placeholder { color: rgba(255,255,255,0.55); }',
+      '.maquinasa-prop-form input:focus,',
+      '.maquinasa-prop-form textarea:focus {',
+      '  outline: none; border-color: #ffbe40; background: rgba(255,255,255,0.14);',
+      '}',
+      '.maquinasa-prop-form textarea { resize: vertical; min-height: 110px; }',
+      '.maquinasa-prop-form-submit {',
+      '  align-self: flex-start; padding: 14px 32px;',
+      '  background: #ffbe40; color: #204e51; border: none;',
+      '  border-radius: 8px; font-weight: 700; font-size: 15px;',
+      '  cursor: pointer; transition: background .2s, transform .1s;',
+      '  font-family: inherit; margin-top: 6px;',
+      '}',
+      '.maquinasa-prop-form-submit:hover { background: #fff; }',
+      '.maquinasa-prop-form-submit:active { transform: translateY(1px); }',
+      '.maquinasa-prop-404 {',
+      '  text-align: center; padding: 80px 20px;',
+      '}',
+      '.maquinasa-prop-404 h1 { font-size: 32px; color: #0c2134; margin: 0 0 14px 0; }',
+      '.maquinasa-prop-404 p { color: #5a6570; margin: 0 0 24px 0; }',
+      '@media (max-width: 991px) {',
+      '  .maquinasa-prop-layout { grid-template-columns: 1fr; gap: 30px; }',
+      '  .maquinasa-prop-header h1 { font-size: 32px; }',
+      '}',
+      '@media (max-width: 767px) {',
+      '  .maquinasa-prop-detalle { padding: 28px 14px 60px; }',
+      '  .maquinasa-prop-header h1 { font-size: 26px; }',
+      '  .maquinasa-prop-precio-box { padding: 20px; }',
+      '  .maquinasa-prop-precio-val { font-size: 26px; }',
+      '  .maquinasa-prop-descripcion { padding: 26px 22px; }',
+      '  .maquinasa-prop-descripcion h2 { font-size: 20px; }',
+      '  .maquinasa-prop-contacto { padding: 32px 22px; }',
+      '  .maquinasa-prop-contacto h2 { font-size: 22px; }',
+      '  .maquinasa-prop-form-row { grid-template-columns: 1fr; }',
+      '  .maquinasa-prop-form-submit { align-self: stretch; }',
+      '  .maquinasa-prop-thumb { width: 70px; height: 54px; }',
+      '}'
+    ].join('\n');
+  }
+
   function fixInmobiliariaPage() {
     if (!/\/inmobiliaria(\/|$)/.test(location.pathname)) return;
+    if (new URLSearchParams(location.search).get('p')) return; // no pintar en vista detalle
     if (document.querySelector('.maquinasa-inmo-page-text')) return;
 
     // Limpiar cualquier inyeccion antigua dentro de .div-block-3
@@ -2273,7 +2816,9 @@
     fixAutomacionRedirect(); // redirect /automacion -> /all-services#asesoramiento
     fixServicesPage();     // F9 services
     fixAboutUsIntro();     // about-us intro reformateada en 3 cards
-    fixInmobiliariaPage(); // F9.2 /inmobiliaria text block
+    fixPropiedadDetalle();    // F9.4 detalle de propiedad si hay ?p=
+    fixInmobiliariaCarousel();// F9.3 carousel de propiedades destacadas
+    fixInmobiliariaPage();    // F9.2 /inmobiliaria text block
     fixFooterLogoSize();   // F7.1
     fixFooterExtraLinks(); // F7.2 + F7.3
     fixFooterSocial();     // F7.4
