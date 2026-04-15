@@ -52,14 +52,13 @@
       if (pb) pb.textContent = 'Expertos en planificación estratégica y desarrollo de negocio para tu empresa.';
       var arrowb = cards[1].querySelector('a.button-arrow');
       if (arrowb) arrowb.setAttribute('href', '/all-services#asesoramiento');
-      // Reemplazar imagen (coches) por icono de asesoramiento (maletin)
+      // Reemplazar imagen (coches) por icono line-art de asesoramiento
+      // (grafico con flecha al alza, mismo estilo que inmobiliaria.png)
       var imgb = cards[1].querySelector('.home-features-image');
       if (imgb) {
         imgb.removeAttribute('srcset');
         imgb.removeAttribute('sizes');
-        imgb.setAttribute('src', "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffbe40'><path d='M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z'/></svg>");
-        imgb.style.objectFit = 'contain';
-        imgb.style.padding = '20px';
+        imgb.setAttribute('src', "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='none' stroke='black' stroke-width='24' stroke-linecap='round' stroke-linejoin='round'><path d='M64 64v384h384'/><path d='M128 336l96-96 80 80 160-192'/><path d='M336 128h128v128'/></svg>");
       }
     }
 
@@ -78,26 +77,35 @@
       '.home-features-wrap-home-2 {',
       '  max-width: 400px;',
       '}',
-      // Mobile: cards mas compactas
+      // Mobile: cards mas compactas y menos espacio entre icono y texto
       '@media (max-width: 767px) {',
       '  .home-features-wrap-home-2 {',
       '    min-height: 0 !important;',
       '  }',
       '  .home-features-wrap-home-2 .image-home-cart {',
       '    min-height: 0 !important;',
-      '    height: 140px !important;',
+      '    height: 120px !important;',
+      '    padding: 10px 0 0 0 !important;',
+      '    margin-bottom: 0 !important;',
       '  }',
       '  .home-features-wrap-home-2 .home-features-image {',
-      '    max-height: 120px !important;',
+      '    max-height: 100px !important;',
       '    object-fit: contain !important;',
+      '    margin: 0 !important;',
       '  }',
       '  .home-features-wrap-home-2 .description-cart {',
-      '    padding: 16px 18px !important;',
+      '    padding: 8px 18px 16px !important;',
       '    min-height: 0 !important;',
+      '    margin-top: 0 !important;',
+      '  }',
+      '  .home-features-wrap-home-2 .heading-cart {',
+      '    margin-top: 4px !important;',
+      '    margin-bottom: 6px !important;',
       '  }',
       '  .home-features-wrap-home-2 .paragraph-large.home-2 {',
       '    font-size: 14px !important;',
       '    line-height: 1.5 !important;',
+      '    margin-top: 0 !important;',
       '  }',
       '}'
     ].join('\n'));
@@ -1606,12 +1614,13 @@
     injectCSS('maquinasa-services-css', [
       'html { scroll-behavior: smooth; }',
       '#inmobiliaria, #asesoramiento { scroll-margin-top: 100px; }',
-      // Asesoramiento: reemplazar imagen de fondo (coches) por icono maletin
+      // Asesoramiento: reemplazar imagen de fondo (coches) por icono line-art
+      // (grafico con flecha al alza, mismo estilo que inmobiliaria.png)
       '.cart-services._02 {',
-      "  background-image: linear-gradient(#204e51e6, #204e51e6), url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffbe40'><path d='M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z'/></svg>\") !important;",
+      "  background-image: linear-gradient(#204e51e6, #204e51e6), url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='none' stroke='white' stroke-width='24' stroke-linecap='round' stroke-linejoin='round'><path d='M64 64v384h384'/><path d='M128 336l96-96 80 80 160-192'/><path d='M336 128h128v128'/></svg>\") !important;",
       '  background-position: 0 0, center 35% !important;',
       '  background-repeat: repeat, no-repeat !important;',
-      '  background-size: auto, 140px 140px !important;',
+      '  background-size: auto, 180px 180px !important;',
       '}',
       // 2 cards juntas, mas anchas, superpuestas al hero (-80px)
       '.services-cart-wrapper {',
