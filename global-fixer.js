@@ -1934,11 +1934,18 @@
       }
     ];
 
-    // Eliminar todo el contenido entre nav y footer
+    // Eliminar todo el contenido entre navbar y footer (ambos hermanos
+    // del mismo padre). El footer real tiene clase ".footer".
     var nav = document.querySelector('.navbar-second');
-    var footer = document.querySelector('footer, .footer-section');
-    if (!nav || !footer) return;
-    var cursor = nav.nextSibling;
+    var footer = document.querySelector('.footer');
+    if (!nav || !footer) { log('F4 blog: nav o footer no encontrados'); return; }
+    // Subir hasta que nav y footer compartan padre
+    var navTop = nav;
+    while (navTop.parentNode && navTop.parentNode !== footer.parentNode) {
+      navTop = navTop.parentNode;
+    }
+    if (!navTop.parentNode) { log('F4 blog: no comun parent'); return; }
+    var cursor = navTop.nextSibling;
     while (cursor && cursor !== footer) {
       var next = cursor.nextSibling;
       if (cursor.nodeType === 1) cursor.parentNode.removeChild(cursor);
