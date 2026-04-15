@@ -1108,6 +1108,17 @@
       '  .nav-menu-content .text-menu-header {',
       '    padding: 6px 0 !important;',
       '  }',
+      // Banner home: reducir hueco entre navbar y contenido en mobile
+      '  .home-banner-section-home-2 {',
+      '    padding-top: 20px !important;',
+      '    min-height: auto !important;',
+      '  }',
+      '}',
+      '@media (max-width: 479px) {',
+      '  .home-banner-section-home-2 {',
+      '    padding-top: 16px !important;',
+      '    min-height: auto !important;',
+      '  }',
       '}'
     ].join('\n'));
     log('Home styling aplicado');
