@@ -1359,8 +1359,11 @@
       modalidadCompra: true,
       modalidadVenta: true,
       otros: '',
-      imagenPrincipal: '',
-      galeria: [],
+      imagenPrincipal: 'https://cdn.prod.website-files.com/65a57b28c989b6bbf744e054/69df96eaa24e44f252a5137a_69df962182f69690bf81d3fa_Jumilla1.jpeg',
+      galeria: [
+        'https://cdn.prod.website-files.com/65a57b28c989b6bbf744e054/69df96eaa24e44f252a51374_69df962182f69690bf81d3fa_Jumilla1.jpeg',
+        'https://cdn.prod.website-files.com/65a57b28c989b6bbf744e054/69df96eaa24e44f252a51377_69df9654d857ee794a0861b5_Jumilla2.jpeg'
+      ],
       destacada: true
     }
     // Añadir aquí las 24 propiedades restantes cuando el cliente envíe datos
