@@ -1588,7 +1588,7 @@
         var t = link.textContent.trim().toLowerCase();
         if (t.indexOf('inmobiliaria') !== -1) {
           link.textContent = 'INMOBILIARIA';
-          link.setAttribute('href', '/all-services#inmobiliaria');
+          link.setAttribute('href', '/inmobiliaria');
           link.style.display = '';
         } else if (t.indexOf('automoci') !== -1) {
           link.textContent = 'ASESORAMIENTO';
@@ -1619,7 +1619,7 @@
       var customMenu = document.createElement('div');
       customMenu.className = 'maquinasa-custom-menu';
       customMenu.innerHTML = [
-        '<a href="/all-services#inmobiliaria" class="maquinasa-custom-menu-item">INMOBILIARIA</a>',
+        '<a href="/inmobiliaria" class="maquinasa-custom-menu-item">INMOBILIARIA</a>',
         '<a href="/all-services#asesoramiento" class="maquinasa-custom-menu-item">ASESORAMIENTO</a>'
       ].join('');
 
@@ -1655,13 +1655,13 @@
       customMenu.addEventListener('mouseenter', showMenu);
       customMenu.addEventListener('mouseleave', hideMenu);
 
-      // Apuntar "Servicios" al ancla de asesoramiento y forzar navegacion
+      // Apuntar "Servicios" a /all-services y forzar navegacion
       // (Webflow intercepta el click en .dropdown-toggle y hace preventDefault)
       if (toggleLink) {
-        toggleLink.setAttribute('href', '/all-services#asesoramiento');
+        toggleLink.setAttribute('href', '/all-services');
         toggleLink.addEventListener('click', function (e) {
           e.stopPropagation();
-          window.location.href = '/all-services#asesoramiento';
+          window.location.href = '/all-services';
         });
       }
 
