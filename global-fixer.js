@@ -1058,18 +1058,17 @@
       '  border-color: #ffbe40 !important;',
       '  color: #204e51 !important;',
       '}',
-      // Logo del navbar mas grande (desktop)
+      // Logo del navbar (desktop)
       '.navbar-second .image-nav-logo,',
       '.nav-menu-content .image-nav-logo,',
       '.logo-menu .image-nav-logo {',
-      '  max-width: 520px !important;',
-      '  min-width: 280px !important;',
-      '  width: 100% !important;',
+      '  max-width: 280px !important;',
+      '  width: auto !important;',
       '  height: auto !important;',
       '}',
       '.navbar-second .logo-menu {',
       '  flex: 0 0 auto !important;',
-      '  max-width: 520px !important;',
+      '  max-width: 300px !important;',
       '}',
       // Mobile: logo del navbar razonable (no demasiado grande)
       '@media (max-width: 767px) {',
