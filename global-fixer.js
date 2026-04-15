@@ -1655,10 +1655,24 @@
       customMenu.addEventListener('mouseenter', showMenu);
       customMenu.addEventListener('mouseleave', hideMenu);
 
-      // Apuntar "Servicios" al ancla de asesoramiento (navega normal)
+      // Apuntar "Servicios" al ancla de asesoramiento y forzar navegacion
+      // (Webflow intercepta el click en .dropdown-toggle y hace preventDefault)
       if (toggleLink) {
         toggleLink.setAttribute('href', '/all-services#asesoramiento');
+        toggleLink.addEventListener('click', function (e) {
+          e.stopPropagation();
+          window.location.href = '/all-services#asesoramiento';
+        });
       }
+
+      // Submenu items: forzar navegacion (por si algun handler global intercepta)
+      customMenu.querySelectorAll('a.maquinasa-custom-menu-item').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.stopPropagation();
+          window.location.href = link.getAttribute('href');
+        });
+      });
+
       // Click en la flecha: toggle via INLINE STYLE para garantizar
       // maxima especificidad (imposible de sobreescribir por CSS).
       var chevronEl = hl.querySelector('.maquinasa-nav-chevron');
