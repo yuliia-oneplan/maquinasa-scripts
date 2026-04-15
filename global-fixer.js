@@ -1899,6 +1899,162 @@
   }
 
   // =====================================================================
+  // F4 — Blog page: inyectar grid estatico con 3 articulos
+  // =====================================================================
+  // El template usa /david-wine como pagina de Blog. Reemplazamos todo
+  // el contenido entre nav y footer por un hero + grid de 3 cards.
+  // Los datos viven tambien en Webflow CMS (coleccion Blog) como fuente
+  // canonica. Cuando el admin-panel este desplegado, este render se
+  // convertira en dinamico via fetch al endpoint /api/blog-public.
+  function fixBlogPage() {
+    if (!/\/david-wine(\/|$)/.test(location.pathname)) return;
+    if (document.querySelector('.maquinasa-blog-section')) return;
+
+    var articles = [
+      {
+        title: 'Nuevas reducciones fiscales para locales comerciales en 2025',
+        summary: 'Analizamos las nuevas ventajas fiscales aprobadas para arrendamientos y compraventas de locales comerciales durante 2025, y cómo aprovecharlas en tu próxima operación inmobiliaria.',
+        link: 'https://blog.brickbro.com/nuevas-reducciones-fiscales-para-locales-en-2025/',
+        date: '15 Feb 2025',
+        source: 'blog.brickbro.com'
+      },
+      {
+        title: 'La inversión inmobiliaria se dispara un 52% en España hasta los 7.583 millones',
+        summary: 'España se consolida como uno de los destinos preferidos para la inversión inmobiliaria europea, impulsada por hoteles, residencial y logística según el último informe de BNP Paribas.',
+        link: 'https://www.ejeprime.com/comercial/espana-se-consolida-como-destino-para-la-inversion-inmobiliaria-segun-bnp-paribas',
+        date: '10 Mar 2025',
+        source: 'ejeprime.com'
+      },
+      {
+        title: 'El emprendimiento senior, protagonista del crecimiento del RETA desde 2021',
+        summary: 'Los mayores de 55 años lideran la creación de nuevas altas en el RETA desde 2021, una tendencia clave para entender el cambio en el perfil del emprendedor español.',
+        link: 'https://ata.es/noticias/el-emprendimiento-senior-protagonista-del-crecimiento-del-reta-desde-2021/',
+        date: '20 Ene 2025',
+        source: 'ata.es'
+      }
+    ];
+
+    // Eliminar todo el contenido entre nav y footer
+    var nav = document.querySelector('.navbar-second');
+    var footer = document.querySelector('footer, .footer-section');
+    if (!nav || !footer) return;
+    var cursor = nav.nextSibling;
+    while (cursor && cursor !== footer) {
+      var next = cursor.nextSibling;
+      if (cursor.nodeType === 1) cursor.parentNode.removeChild(cursor);
+      cursor = next;
+    }
+
+    // Construir seccion
+    var section = document.createElement('section');
+    section.className = 'maquinasa-blog-section';
+
+    var cardsHTML = articles.map(function (a) {
+      return [
+        '<article class="maquinasa-blog-card">',
+        '  <div class="maquinasa-blog-card-body">',
+        '    <div class="maquinasa-blog-meta">',
+        '      <span class="maquinasa-blog-date">' + a.date + '</span>',
+        '      <span class="maquinasa-blog-source">' + a.source + '</span>',
+        '    </div>',
+        '    <h3 class="maquinasa-blog-title">' + a.title + '</h3>',
+        '    <p class="maquinasa-blog-summary">' + a.summary + '</p>',
+        '    <a href="' + a.link + '" target="_blank" rel="noopener" class="maquinasa-blog-link">Leer artículo →</a>',
+        '  </div>',
+        '</article>'
+      ].join('');
+    }).join('');
+
+    section.innerHTML = [
+      '<div class="maquinasa-blog-hero">',
+      '  <div class="maquinasa-blog-hero-inner">',
+      '    <h1>Blog</h1>',
+      '    <p>Noticias, análisis y tendencias del sector inmobiliario y empresarial.</p>',
+      '  </div>',
+      '</div>',
+      '<div class="maquinasa-blog-grid-wrap">',
+      '  <div class="maquinasa-blog-grid">',
+      cardsHTML,
+      '  </div>',
+      '</div>'
+    ].join('');
+
+    footer.parentNode.insertBefore(section, footer);
+
+    injectCSS('maquinasa-blog-css', [
+      '.maquinasa-blog-section {',
+      '  background: #f6f7f8;',
+      '  font-family: inherit;',
+      '}',
+      '.maquinasa-blog-hero {',
+      '  background: linear-gradient(135deg, #204e51 0%, #0c2134 100%);',
+      '  padding: 120px 20px 80px;',
+      '  text-align: center;',
+      '  color: #fff;',
+      '}',
+      '.maquinasa-blog-hero-inner { max-width: 800px; margin: 0 auto; }',
+      '.maquinasa-blog-hero h1 {',
+      '  font-size: 56px; margin: 0 0 16px 0; color: #ffbe40; font-weight: 700;',
+      '}',
+      '.maquinasa-blog-hero p { font-size: 18px; margin: 0; color: #e8e8e8; line-height: 1.6; }',
+      '.maquinasa-blog-grid-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }',
+      '.maquinasa-blog-grid {',
+      '  display: grid;',
+      '  grid-template-columns: repeat(3, 1fr);',
+      '  gap: 30px;',
+      '}',
+      '.maquinasa-blog-card {',
+      '  background: #fff;',
+      '  border-radius: 12px;',
+      '  overflow: hidden;',
+      '  box-shadow: 0 2px 12px rgba(12,33,52,0.08);',
+      '  transition: transform .3s, box-shadow .3s;',
+      '  display: flex; flex-direction: column;',
+      '}',
+      '.maquinasa-blog-card:hover {',
+      '  transform: translateY(-6px);',
+      '  box-shadow: 0 12px 32px rgba(12,33,52,0.15);',
+      '}',
+      '.maquinasa-blog-card-body { padding: 28px; display: flex; flex-direction: column; flex: 1; }',
+      '.maquinasa-blog-meta {',
+      '  display: flex; justify-content: space-between; align-items: center;',
+      '  font-size: 12px; color: #7a8a94; margin-bottom: 14px;',
+      '  text-transform: uppercase; letter-spacing: .5px; font-weight: 600;',
+      '}',
+      '.maquinasa-blog-date { color: #ffbe40; }',
+      '.maquinasa-blog-title {',
+      '  font-size: 20px; line-height: 1.35; color: #0c2134;',
+      '  margin: 0 0 14px 0; font-weight: 700;',
+      '}',
+      '.maquinasa-blog-summary {',
+      '  font-size: 15px; line-height: 1.65; color: #4a5560;',
+      '  margin: 0 0 22px 0; flex: 1;',
+      '}',
+      '.maquinasa-blog-link {',
+      '  color: #204e51; font-weight: 700; text-decoration: none;',
+      '  font-size: 15px; align-self: flex-start;',
+      '  border-bottom: 2px solid #ffbe40; padding-bottom: 2px;',
+      '  transition: color .2s;',
+      '}',
+      '.maquinasa-blog-link:hover { color: #ffbe40; }',
+      '@media (max-width: 991px) {',
+      '  .maquinasa-blog-grid { grid-template-columns: repeat(2, 1fr); }',
+      '}',
+      '@media (max-width: 767px) {',
+      '  .maquinasa-blog-hero { padding: 80px 20px 50px; }',
+      '  .maquinasa-blog-hero h1 { font-size: 40px; }',
+      '  .maquinasa-blog-hero p { font-size: 16px; }',
+      '  .maquinasa-blog-grid { grid-template-columns: 1fr; gap: 20px; }',
+      '  .maquinasa-blog-grid-wrap { padding: 50px 16px; }',
+      '  .maquinasa-blog-card-body { padding: 22px; }',
+      '  .maquinasa-blog-title { font-size: 18px; }',
+      '}'
+    ].join('\n'));
+
+    log('F4 blog page render');
+  }
+
+  // =====================================================================
   // Orquestador
   // =====================================================================
   function runAllFixes() {
@@ -1917,6 +2073,7 @@
     fixFooterLogoSize();   // F7.1
     fixFooterExtraLinks(); // F7.2 + F7.3
     fixFooterSocial();     // F7.4
+    fixBlogPage();         // F4 blog grid en /david-wine
     // Los siguientes fixes:
     // fixTeamSection();     // F3.1
     // fixContactGdpr();     // F5.1
