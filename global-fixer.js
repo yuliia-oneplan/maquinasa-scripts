@@ -1019,6 +1019,17 @@
   // Home styling: colores contadores, botones, logo, texto
   // =====================================================================
   function fixHomeStyling() {
+    // Unificar el logo del navbar (el template usa 3 imagenes distintas:
+    // Logo 0.jpg, Logo Landscape.webp, MicrosoftTeams-image.png). Forzamos
+    // todos a usar Logo 0.jpg que es el corporativo.
+    var correctLogoSrc = 'https://cdn.prod.website-files.com/65a57b26c989b6bbf744db09/687774c187a6f38767c87ae4_Logo%200.jpg';
+    var navLogos = document.querySelectorAll('.image-nav-logo');
+    navLogos.forEach(function (img) {
+      img.removeAttribute('srcset');
+      img.removeAttribute('sizes');
+      img.setAttribute('src', correctLogoSrc);
+    });
+
     injectCSS('maquinasa-home-styling', [
       // Contadores +10/+40/+200 en amarillo corporativo
       '.number-counter, .number-counter.size {',
@@ -1076,8 +1087,8 @@
       '  .nav-menu-content .image-nav-logo,',
       '  .logo-menu .image-nav-logo,',
       '  .tablet-menu-logo .image-nav-logo {',
-      '    max-width: 150px !important;',
-      '    max-height: 60px !important;',
+      '    max-width: 210px !important;',
+      '    max-height: 80px !important;',
       '    height: auto !important;',
       '    width: auto !important;',
       '  }',
