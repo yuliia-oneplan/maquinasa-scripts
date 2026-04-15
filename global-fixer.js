@@ -1207,8 +1207,8 @@
       '    font-weight: 700 !important;',
       '    vertical-align: middle !important;',
       '  }',
-      // Custom menu (submenu) inline cuando esta abierto en mobile:
-      // card blanca con borde amarillo, letras verdes, pegado a la flecha
+      // Custom menu (submenu) debajo de "Servicios", full width:
+      // card blanca con borde amarillo, letras verdes
       '  .nav-menu-content .header-link .maquinasa-custom-menu {',
       '    position: static !important;',
       '    display: none !important;',
@@ -1216,8 +1216,10 @@
       '    box-shadow: 0 2px 10px rgba(12,33,52,0.12) !important;',
       '    border-left: 4px solid #ffbe40 !important;',
       '    border-radius: 8px !important;',
-      '    margin: 2px 0 6px 16px !important;',
+      '    margin: 4px 8px 8px 0 !important;',
       '    padding: 4px 0 !important;',
+      '    width: auto !important;',
+      '    max-width: 100% !important;',
       '    min-width: 0 !important;',
       '  }',
       '  .header-link.maquinasa-dd-open .maquinasa-custom-menu {',
@@ -1620,6 +1622,16 @@
             hl.classList.toggle('maquinasa-dd-open');
           }
         });
+      }
+      // Click directo en la flecha siempre togglea (garantiza cerrar
+      // incluso si Webflow intercepta el click del link padre)
+      var chevronEl = hl.querySelector('.maquinasa-nav-chevron');
+      if (chevronEl) {
+        chevronEl.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          hl.classList.toggle('maquinasa-dd-open');
+        }, true);
       }
     });
 
