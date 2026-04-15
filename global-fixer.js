@@ -1015,6 +1015,85 @@
     log('about-us intro limpia (3 parrafos)');
   }
 
+  // =====================================================================
+  // Home styling: colores contadores, botones, logo, texto
+  // =====================================================================
+  function fixHomeStyling() {
+    injectCSS('maquinasa-home-styling', [
+      // Contadores +10/+40/+200 en amarillo corporativo
+      '.number-counter, .number-counter.size {',
+      '  color: #ffbe40 !important;',
+      '}',
+      // Texto bajo los contadores en color mas oscuro
+      '.text-counter {',
+      '  color: #0c2134 !important;',
+      '  font-weight: 500 !important;',
+      '}',
+      // Parrafo "¿Tienes algún proyecto en mente...?" en color mas oscuro
+      '.paragraph-banner {',
+      '  color: #0c2134 !important;',
+      '}',
+      // Boton "Nuestros servicios" verde por defecto, amarillo al hover
+      '.primary-button.margin-top-50px,',
+      '.home-banner-section-home-2 .primary-button {',
+      '  background-color: #204e51 !important;',
+      '  color: #ffffff !important;',
+      '  transition: background-color .3s, color .3s !important;',
+      '}',
+      '.primary-button.margin-top-50px:hover,',
+      '.home-banner-section-home-2 .primary-button:hover {',
+      '  background-color: #ffbe40 !important;',
+      '  color: #204e51 !important;',
+      '}',
+      // Boton "Quiénes somos" (border-button) mas oscuro + borde mas grueso
+      '.home-banner-section-home-2 .border-button,',
+      '.banner-block-home-2 .border-button {',
+      '  border: 2px solid #0c2134 !important;',
+      '  color: #0c2134 !important;',
+      '  font-weight: 600 !important;',
+      '}',
+      '.home-banner-section-home-2 .border-button:hover,',
+      '.banner-block-home-2 .border-button:hover {',
+      '  background-color: #ffbe40 !important;',
+      '  border-color: #ffbe40 !important;',
+      '  color: #204e51 !important;',
+      '}',
+      // Logo del navbar mas grande (desktop)
+      '.navbar-second .image-nav-logo,',
+      '.nav-menu-content .image-nav-logo,',
+      '.logo-menu .image-nav-logo {',
+      '  max-width: 320px !important;',
+      '  height: auto !important;',
+      '}',
+      // Mobile: logo del navbar razonable (no demasiado grande)
+      '@media (max-width: 767px) {',
+      '  .navbar-second .image-nav-logo,',
+      '  .nav-menu-content .image-nav-logo,',
+      '  .logo-menu .image-nav-logo,',
+      '  .tablet-menu-logo .image-nav-logo {',
+      '    max-width: 150px !important;',
+      '    max-height: 60px !important;',
+      '    height: auto !important;',
+      '    width: auto !important;',
+      '  }',
+      // Menu hamburguesa: items menos separados + alineacion a la izquierda
+      '  .nav-menu-content .navigation-link {',
+      '    gap: 6px !important;',
+      '  }',
+      '  .nav-menu-content .line-block,',
+      '  .nav-menu-content .header-link {',
+      '    margin: 4px 0 !important;',
+      '    padding-left: 20px !important;',
+      '    text-align: left !important;',
+      '  }',
+      '  .nav-menu-content .text-menu-header {',
+      '    padding: 6px 0 !important;',
+      '  }',
+      '}'
+    ].join('\n'));
+    log('Home styling aplicado');
+  }
+
   function fixInmobiliariaPage() {
     if (!/\/inmobiliaria(\/|$)/.test(location.pathname)) return;
     if (document.querySelector('.maquinasa-inmo-page-text')) return;
@@ -1734,6 +1813,7 @@
     fixHeaderSizes();      // F1.3
     fixHomeCards();        // F2.1
     fixHomeCollage();      // F2.3
+    fixHomeStyling();      // colores contadores, botones, logo, texto
     fixTeamSection();      // F3.1
     fixContactGdpr();      // F5.1
     fixFloatingWhatsApp(); // F6 floating (all pages)
