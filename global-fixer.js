@@ -1585,7 +1585,7 @@
       if (currentIdx > max) currentIdx = max;
       if (currentIdx < 0) currentIdx = 0;
       var gap = 28;
-      if (window.innerWidth <= 767) gap = 18;
+      if (window.innerWidth <= 767) gap = 0;
       else if (window.innerWidth <= 991) gap = 22;
       var cardW = allCards[0] ? allCards[0].offsetWidth : 300;
       var offset = currentIdx * (cardW + gap);
@@ -1751,9 +1751,9 @@
       '    margin-bottom: 24px !important;',
       '    line-height: 1.5 !important;',
       '  }',
-      // Flechas ocultas, navegar con swipe + dots
-      '  .maquinasa-prop-arrow { display: none !important; }',
-      '  .maquinasa-prop-slider-wrap { gap: 0 !important; }',
+      // Flechas visibles pero compactas
+      '  .maquinasa-prop-arrow { width: 34px !important; height: 34px !important; font-size: 20px !important; }',
+      '  .maquinasa-prop-slider-wrap { gap: 4px !important; }',
       '  .maquinasa-prop-slider { overflow: hidden !important; }',
       '  .maquinasa-prop-track { gap: 0 !important; }',
       // Cada slot ocupa 100%, card centrada con max-width
