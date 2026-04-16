@@ -1511,7 +1511,7 @@
       var img = p.imagenPrincipal || PROP_PLACEHOLDER;
       return [
         '<a href="/inmobiliaria?p=' + encodeURIComponent(p.slug) + '" class="maquinasa-prop-card">',
-        '  <div class="maquinasa-prop-img" style="background-image:url(\'' + img + '\')"></div>',
+        '  <img class="maquinasa-prop-img" src="' + img + '" alt="' + escapeHTML(p.nombre) + '">',
         '  <div class="maquinasa-prop-body">',
         '    <h3>' + escapeHTML(p.nombre) + '</h3>',
         '    <p class="maquinasa-prop-loc">\ud83d\udccd ' + escapeHTML(p.ubicacion) + '</p>',
@@ -1699,9 +1699,8 @@
       '}',
       '.maquinasa-prop-img {',
       '  width: 100%;',
-      '  aspect-ratio: 4 / 3;',
-      '  background-size: cover;',
-      '  background-position: center;',
+      '  height: auto;',
+      '  display: block;',
       '  background-color: #204e51;',
       '}',
       '.maquinasa-prop-body { padding: 22px 24px 20px; display: flex; flex-direction: column; flex: 1; }',
