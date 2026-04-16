@@ -1750,18 +1750,17 @@
       '  .maquinasa-prop-arrow { display: none !important; }',
       '  .maquinasa-prop-slider-wrap { gap: 0 !important; }',
       '  .maquinasa-prop-track { gap: 16px; }',
-      // Card: 100% del slider (ya no hay flechas restando espacio)
+      // Card: misma apariencia que en desktop (estrecha, centrada)
+      '  .maquinasa-prop-slider {',
+      '    display: flex !important;',
+      '    justify-content: center !important;',
+      '    overflow: hidden !important;',
+      '  }',
       '  .maquinasa-prop-card {',
-      '    min-width: 100% !important;',
-      '    max-width: 100% !important;',
+      '    min-width: 280px !important;',
+      '    max-width: 280px !important;',
+      '    margin: 0 auto !important;',
       '  }',
-      // Imagen mas compacta
-      '  .maquinasa-prop-img {',
-      '    aspect-ratio: 3 / 2 !important;',
-      '  }',
-      '  .maquinasa-prop-body { padding: 16px 18px 14px; }',
-      '  .maquinasa-prop-body h3 { font-size: 16px; }',
-      '  .maquinasa-prop-desc { font-size: 13px; }',
       '}'
     ].join('\n'));
 
