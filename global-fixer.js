@@ -1794,12 +1794,10 @@
         '      <div class="maquinasa-prop-field-body">' + prop.equipamiento + '</div>',
         '    </div>'
       ].join('\n') : ''),
-      (prop.otros ? [
-        '    <div class="maquinasa-prop-field">',
-        '      <h3>Otros</h3>',
-        '      <div class="maquinasa-prop-field-body">' + prop.otros + '</div>',
-        '    </div>'
-      ].join('\n') : ''),
+      '    <div class="maquinasa-prop-field">',
+      '      <h3>Otros</h3>',
+      '      <div class="maquinasa-prop-field-body">' + (prop.otros || '<p class="maquinasa-prop-empty">Sin información adicional por el momento.</p>') + '</div>',
+      '    </div>',
       '  </div>',
       '  <div class="maquinasa-prop-contacto">',
       '    <h2>¿Te interesa esta propiedad?</h2>',
@@ -2008,6 +2006,7 @@
       '.maquinasa-prop-field-body ul { padding-left: 22px; margin: 0; }',
       '.maquinasa-prop-field-body li { margin-bottom: 8px; }',
       '.maquinasa-prop-field-body strong { color: #204e51; }',
+      '.maquinasa-prop-empty { color: #9aa4ae; font-style: italic; margin: 0; }',
       '.maquinasa-prop-contacto {',
       '  background: linear-gradient(135deg, #204e51 0%, #0c2134 100%);',
       '  color: #fff; border-radius: 14px; padding: 44px 40px;',
