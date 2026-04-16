@@ -1748,17 +1748,14 @@
       // Ocultar flechas laterales, usuario swipea + dots
       '  .maquinasa-prop-arrow { display: none !important; }',
       '  .maquinasa-prop-slider-wrap { gap: 0 !important; }',
-      '  .maquinasa-prop-track { gap: 16px; }',
-      // Card: misma apariencia que en desktop (estrecha, centrada)
-      '  .maquinasa-prop-slider {',
-      '    display: flex !important;',
-      '    justify-content: center !important;',
-      '    overflow: hidden !important;',
-      '  }',
+      '  .maquinasa-prop-track { gap: 0 !important; }',
+      '  .maquinasa-prop-slider { overflow: hidden !important; }',
+      // Cada card = 100% del slider visible (1 sola card a la vez)
       '  .maquinasa-prop-card {',
-      '    min-width: 280px !important;',
-      '    max-width: 280px !important;',
-      '    margin: 0 auto !important;',
+      '    min-width: 100% !important;',
+      '    max-width: 100% !important;',
+      '    padding: 0 20px !important;',
+      '    box-sizing: border-box !important;',
       '  }',
       '}'
     ].join('\n'));
