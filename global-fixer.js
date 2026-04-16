@@ -1399,8 +1399,59 @@
       imagenPrincipal: '',
       galeria: [],
       destacada: true
+    },
+    {
+      slug: 'nave-industrial-alcantarilla',
+      nombre: 'Nave industrial en Alcantarilla',
+      descripcion: 'Nave industrial',
+      detalle: '<ul><li>1.500 m² de superficie cubierta</li><li>Acceso directo a autovía A-7</li></ul>',
+      equipamiento: '<ul><li>Puente grúa 10 toneladas</li><li>Oficinas en entreplanta</li></ul>',
+      ubicacion: 'Polígono Oeste, Alcantarilla',
+      medidas: '1.500 m² cubiertos + 600 m² patio',
+      precio: 'Consulta',
+      disponibilidad: 'Si',
+      modalidadCompra: true,
+      modalidadVenta: true,
+      otros: '',
+      imagenPrincipal: '',
+      galeria: [],
+      destacada: true
+    },
+    {
+      slug: 'piso-centro-cartagena',
+      nombre: 'Piso reformado en Cartagena',
+      descripcion: 'Vivienda urbana',
+      detalle: '<ul><li>3 dormitorios, 2 baños</li><li>Terraza con vistas al puerto</li></ul>',
+      equipamiento: '<ul><li>Cocina equipada</li><li>Aire acondicionado en todas las estancias</li></ul>',
+      ubicacion: 'Casco Antiguo, Cartagena',
+      medidas: '120 m² útiles',
+      precio: '185.000 €',
+      disponibilidad: 'Si',
+      modalidadCompra: true,
+      modalidadVenta: false,
+      otros: '',
+      imagenPrincipal: '',
+      galeria: [],
+      destacada: true
+    },
+    {
+      slug: 'solar-urbano-molina',
+      nombre: 'Solar urbano en Molina de Segura',
+      descripcion: 'Solar urbano',
+      detalle: '<ul><li>Apto para edificio residencial de 4 plantas</li><li>Licencia de obra concedida</li></ul>',
+      equipamiento: '<ul><li>Acometidas de agua y luz disponibles</li></ul>',
+      ubicacion: 'Av. de la Industria, Molina de Segura',
+      medidas: '800 m²',
+      precio: 'Consulta',
+      disponibilidad: 'Proximamente',
+      modalidadCompra: true,
+      modalidadVenta: true,
+      otros: '',
+      imagenPrincipal: '',
+      galeria: [],
+      destacada: true
     }
-    // Añadir aquí las 22 propiedades restantes cuando el cliente envíe datos
+    // Añadir aquí las propiedades restantes cuando el cliente envíe datos
   ];
 
   // Placeholder SVG (icono terreno/casa) cuando no hay imagen todavia
@@ -1473,7 +1524,8 @@
     var prevBtn = section.querySelector('.maquinasa-prop-arrow-prev');
     var nextBtn = section.querySelector('.maquinasa-prop-arrow-next');
     var dotsWrap = section.querySelector('.maquinasa-prop-dots');
-    var currentPage = 0;
+    // currentIdx = indice de la PRIMERA card visible (avanza de 1 en 1)
+    var currentIdx = 0;
 
     function getVisible() {
       if (window.innerWidth <= 767) return 1;
@@ -1481,19 +1533,19 @@
       return 3;
     }
 
-    function getTotalPages() {
-      return Math.max(1, Math.ceil(allCards.length / getVisible()));
+    function getMaxIdx() {
+      return Math.max(0, allCards.length - getVisible());
     }
 
     function updateDots() {
-      var total = getTotalPages();
+      var max = getMaxIdx();
       dotsWrap.innerHTML = '';
-      for (var i = 0; i < total; i++) {
+      for (var i = 0; i <= max; i++) {
         var dot = document.createElement('span');
-        dot.className = 'maquinasa-prop-dot' + (i === currentPage ? ' active' : '');
-        dot.dataset.page = i;
+        dot.className = 'maquinasa-prop-dot' + (i === currentIdx ? ' active' : '');
+        dot.dataset.idx = i;
         dot.addEventListener('click', function () {
-          currentPage = parseInt(this.dataset.page, 10);
+          currentIdx = parseInt(this.dataset.idx, 10);
           slide();
         });
         dotsWrap.appendChild(dot);
@@ -1501,28 +1553,27 @@
     }
 
     function slide() {
-      var vis = getVisible();
-      var total = getTotalPages();
-      if (currentPage >= total) currentPage = total - 1;
-      if (currentPage < 0) currentPage = 0;
+      var max = getMaxIdx();
+      if (currentIdx > max) currentIdx = max;
+      if (currentIdx < 0) currentIdx = 0;
       var gap = 28;
       if (window.innerWidth <= 767) gap = 18;
       else if (window.innerWidth <= 991) gap = 22;
       var cardW = allCards[0] ? allCards[0].offsetWidth : 300;
-      var offset = currentPage * vis * (cardW + gap);
+      var offset = currentIdx * (cardW + gap);
       track.style.transform = 'translateX(-' + offset + 'px)';
       // Update dots
       var dots = dotsWrap.querySelectorAll('.maquinasa-prop-dot');
-      dots.forEach(function (d, i) { d.classList.toggle('active', i === currentPage); });
+      dots.forEach(function (d, i) { d.classList.toggle('active', i === currentIdx); });
       // Arrow visibility
-      prevBtn.style.opacity = currentPage === 0 ? '0.3' : '1';
-      prevBtn.style.pointerEvents = currentPage === 0 ? 'none' : 'auto';
-      nextBtn.style.opacity = currentPage >= total - 1 ? '0.3' : '1';
-      nextBtn.style.pointerEvents = currentPage >= total - 1 ? 'none' : 'auto';
+      prevBtn.style.opacity = currentIdx === 0 ? '0.3' : '1';
+      prevBtn.style.pointerEvents = currentIdx === 0 ? 'none' : 'auto';
+      nextBtn.style.opacity = currentIdx >= max ? '0.3' : '1';
+      nextBtn.style.pointerEvents = currentIdx >= max ? 'none' : 'auto';
     }
 
-    prevBtn.addEventListener('click', function () { currentPage--; slide(); });
-    nextBtn.addEventListener('click', function () { currentPage++; slide(); });
+    prevBtn.addEventListener('click', function () { currentIdx--; slide(); });
+    nextBtn.addEventListener('click', function () { currentIdx++; slide(); });
 
     // Touch swipe support
     var touchStartX = 0;
@@ -1533,7 +1584,7 @@
     slider.addEventListener('touchend', function (e) {
       var dx = e.changedTouches[0].clientX - touchStartX;
       if (Math.abs(dx) > 50) {
-        if (dx < 0) { currentPage++; } else { currentPage--; }
+        if (dx < 0) { currentIdx++; } else { currentIdx--; }
         slide();
       }
     }, { passive: true });
