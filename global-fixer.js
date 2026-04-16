@@ -1365,8 +1365,42 @@
         'https://cdn.prod.website-files.com/65a57b28c989b6bbf744e054/69df96eaa24e44f252a51377_69df9654d857ee794a0861b5_Jumilla2.jpeg'
       ],
       destacada: true
+    },
+    {
+      slug: 'local-comercial-murcia',
+      nombre: 'Local comercial en Murcia centro',
+      descripcion: 'Local comercial',
+      detalle: '<ul><li>200 m² diáfanos en planta baja</li><li>Escaparate a calle principal</li></ul>',
+      equipamiento: '<ul><li>Aire acondicionado industrial</li><li>Suelo técnico</li></ul>',
+      ubicacion: 'Gran Vía, Murcia',
+      medidas: '200 m² útiles',
+      precio: 'Consulta',
+      disponibilidad: 'Si',
+      modalidadCompra: true,
+      modalidadVenta: true,
+      otros: '',
+      imagenPrincipal: '',
+      galeria: [],
+      destacada: true
+    },
+    {
+      slug: 'finca-agricola-lorca',
+      nombre: 'Finca agrícola en Lorca',
+      descripcion: 'Terreno agrícola',
+      detalle: '<ul><li>45 hectáreas de cultivo de regadío</li><li>Acceso por carretera comarcal</li></ul>',
+      equipamiento: '<ul><li>Sistema de riego por goteo</li><li>Balsa de almacenamiento 10.000 m³</li></ul>',
+      ubicacion: 'Camino de los Huertos, Lorca',
+      medidas: 'Superficie total 45 hectáreas',
+      precio: '350.000 €',
+      disponibilidad: 'Si',
+      modalidadCompra: true,
+      modalidadVenta: false,
+      otros: '',
+      imagenPrincipal: '',
+      galeria: [],
+      destacada: true
     }
-    // Añadir aquí las 24 propiedades restantes cuando el cliente envíe datos
+    // Añadir aquí las 22 propiedades restantes cuando el cliente envíe datos
   ];
 
   // Placeholder SVG (icono terreno/casa) cuando no hay imagen todavia
@@ -1379,11 +1413,11 @@
   }
 
   // F9.3 — Carousel de propiedades destacadas en /inmobiliaria
-  // Reemplaza las 3 fotos finales (.image-block-services) con un grid
-  // de cards de propiedades marcadas como destacada:true
+  // Reemplaza las 3 fotos finales (.image-block-services) con un carousel
+  // con flechas de navegacion, mostrando 3 cards a la vez (desktop),
+  // 2 (tablet), 1 (movil). Se desplaza de card en card.
   function fixInmobiliariaCarousel() {
     if (!/\/inmobiliaria(\/|$)/.test(location.pathname)) return;
-    // Si hay ?p= es vista detalle, no pintar lista
     if (new URLSearchParams(location.search).get('p')) return;
     if (document.querySelector('.maquinasa-prop-carousel')) return;
 
@@ -1403,11 +1437,11 @@
         '  <div class="maquinasa-prop-img" style="background-image:url(\'' + img + '\')"></div>',
         '  <div class="maquinasa-prop-body">',
         '    <h3>' + escapeHTML(p.nombre) + '</h3>',
-        '    <p class="maquinasa-prop-loc">📍 ' + escapeHTML(p.ubicacion) + '</p>',
+        '    <p class="maquinasa-prop-loc">\ud83d\udccd ' + escapeHTML(p.ubicacion) + '</p>',
         '    <p class="maquinasa-prop-desc">' + escapeHTML(p.descripcion || '') + '</p>',
         '    <div class="maquinasa-prop-footer">',
         '      <span class="maquinasa-prop-precio">' + escapeHTML(p.precio) + '</span>',
-        '      <span class="maquinasa-prop-cta">Ver detalle →</span>',
+        '      <span class="maquinasa-prop-cta">Ver detalle \u2192</span>',
         '    </div>',
         '  </div>',
         '</a>'
@@ -1418,13 +1452,97 @@
       '<div class="maquinasa-prop-carousel-inner">',
       '  <h2>Propiedades destacadas</h2>',
       '  <p class="maquinasa-prop-subtitle">Descubre nuestra selección de inmuebles en venta y alquiler</p>',
-      '  <div class="maquinasa-prop-cards">',
+      '  <div class="maquinasa-prop-slider-wrap">',
+      '    <button class="maquinasa-prop-arrow maquinasa-prop-arrow-prev" aria-label="Anterior">\u2039</button>',
+      '    <div class="maquinasa-prop-slider">',
+      '      <div class="maquinasa-prop-track">',
       cards,
+      '      </div>',
+      '    </div>',
+      '    <button class="maquinasa-prop-arrow maquinasa-prop-arrow-next" aria-label="Siguiente">\u203a</button>',
       '  </div>',
+      '  <div class="maquinasa-prop-dots"></div>',
       '</div>'
     ].join('\n');
 
     host.parentNode.replaceChild(section, host);
+
+    // --- Wire carousel logic ---
+    var track = section.querySelector('.maquinasa-prop-track');
+    var allCards = section.querySelectorAll('.maquinasa-prop-card');
+    var prevBtn = section.querySelector('.maquinasa-prop-arrow-prev');
+    var nextBtn = section.querySelector('.maquinasa-prop-arrow-next');
+    var dotsWrap = section.querySelector('.maquinasa-prop-dots');
+    var currentPage = 0;
+
+    function getVisible() {
+      if (window.innerWidth <= 767) return 1;
+      if (window.innerWidth <= 991) return 2;
+      return 3;
+    }
+
+    function getTotalPages() {
+      return Math.max(1, Math.ceil(allCards.length / getVisible()));
+    }
+
+    function updateDots() {
+      var total = getTotalPages();
+      dotsWrap.innerHTML = '';
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('span');
+        dot.className = 'maquinasa-prop-dot' + (i === currentPage ? ' active' : '');
+        dot.dataset.page = i;
+        dot.addEventListener('click', function () {
+          currentPage = parseInt(this.dataset.page, 10);
+          slide();
+        });
+        dotsWrap.appendChild(dot);
+      }
+    }
+
+    function slide() {
+      var vis = getVisible();
+      var total = getTotalPages();
+      if (currentPage >= total) currentPage = total - 1;
+      if (currentPage < 0) currentPage = 0;
+      var gap = 28;
+      if (window.innerWidth <= 767) gap = 18;
+      else if (window.innerWidth <= 991) gap = 22;
+      var cardW = allCards[0] ? allCards[0].offsetWidth : 300;
+      var offset = currentPage * vis * (cardW + gap);
+      track.style.transform = 'translateX(-' + offset + 'px)';
+      // Update dots
+      var dots = dotsWrap.querySelectorAll('.maquinasa-prop-dot');
+      dots.forEach(function (d, i) { d.classList.toggle('active', i === currentPage); });
+      // Arrow visibility
+      prevBtn.style.opacity = currentPage === 0 ? '0.3' : '1';
+      prevBtn.style.pointerEvents = currentPage === 0 ? 'none' : 'auto';
+      nextBtn.style.opacity = currentPage >= total - 1 ? '0.3' : '1';
+      nextBtn.style.pointerEvents = currentPage >= total - 1 ? 'none' : 'auto';
+    }
+
+    prevBtn.addEventListener('click', function () { currentPage--; slide(); });
+    nextBtn.addEventListener('click', function () { currentPage++; slide(); });
+
+    // Touch swipe support
+    var touchStartX = 0;
+    var slider = section.querySelector('.maquinasa-prop-slider');
+    slider.addEventListener('touchstart', function (e) {
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    slider.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) {
+        if (dx < 0) { currentPage++; } else { currentPage--; }
+        slide();
+      }
+    }, { passive: true });
+
+    // Re-layout on resize
+    window.addEventListener('resize', function () { updateDots(); slide(); });
+
+    updateDots();
+    slide();
 
     injectCSS('maquinasa-prop-carousel-css', [
       '.maquinasa-prop-carousel {',
@@ -1441,11 +1559,48 @@
       '  text-align: center; color: #5a6570;',
       '  font-size: 16px; margin: 0 0 40px 0;',
       '}',
-      '.maquinasa-prop-cards {',
-      '  display: grid;',
-      '  grid-template-columns: repeat(3, 1fr);',
-      '  gap: 28px;',
+      // Slider wrapper con flechas
+      '.maquinasa-prop-slider-wrap {',
+      '  display: flex;',
+      '  align-items: center;',
+      '  gap: 12px;',
+      '  position: relative;',
       '}',
+      '.maquinasa-prop-slider {',
+      '  flex: 1;',
+      '  overflow: hidden;',
+      '}',
+      '.maquinasa-prop-track {',
+      '  display: flex;',
+      '  gap: 28px;',
+      '  transition: transform .4s ease;',
+      '}',
+      // Flechas de navegacion
+      '.maquinasa-prop-arrow {',
+      '  flex: 0 0 auto;',
+      '  width: 52px; height: 52px;',
+      '  background: #204e51; color: #fff;',
+      '  border: none; border-radius: 50%;',
+      '  font-size: 32px; line-height: 1;',
+      '  cursor: pointer;',
+      '  display: flex; align-items: center; justify-content: center;',
+      '  transition: background .2s, opacity .2s;',
+      '  box-shadow: 0 4px 14px rgba(12,33,52,0.18);',
+      '  user-select: none;',
+      '}',
+      '.maquinasa-prop-arrow:hover { background: #ffbe40; color: #204e51; }',
+      // Dots (indicadores de pagina)
+      '.maquinasa-prop-dots {',
+      '  display: flex; justify-content: center; gap: 10px; margin-top: 28px;',
+      '}',
+      '.maquinasa-prop-dot {',
+      '  width: 12px; height: 12px; border-radius: 50%;',
+      '  background: #d0d4d8; cursor: pointer;',
+      '  transition: background .2s, transform .2s;',
+      '}',
+      '.maquinasa-prop-dot.active { background: #ffbe40; transform: scale(1.3); }',
+      '.maquinasa-prop-dot:hover { background: #204e51; }',
+      // Cards
       '.maquinasa-prop-card {',
       '  background: #fff;',
       '  border-radius: 14px;',
@@ -1455,6 +1610,9 @@
       '  text-decoration: none !important;',
       '  color: inherit;',
       '  display: flex; flex-direction: column;',
+      '  min-width: calc((100% - 56px) / 3);',
+      '  max-width: calc((100% - 56px) / 3);',
+      '  flex: 0 0 auto;',
       '}',
       '.maquinasa-prop-card:hover {',
       '  transform: translateY(-6px);',
@@ -1492,13 +1650,24 @@
       '  text-transform: uppercase; letter-spacing: .5px;',
       '}',
       '@media (max-width: 991px) {',
-      '  .maquinasa-prop-cards { grid-template-columns: repeat(2, 1fr); gap: 20px; }',
+      '  .maquinasa-prop-track { gap: 22px; }',
+      '  .maquinasa-prop-card {',
+      '    min-width: calc((100% - 22px) / 2);',
+      '    max-width: calc((100% - 22px) / 2);',
+      '  }',
+      '  .maquinasa-prop-arrow { width: 44px; height: 44px; font-size: 26px; }',
       '}',
       '@media (max-width: 767px) {',
       '  .maquinasa-prop-carousel { padding: 50px 16px; }',
       '  .maquinasa-prop-carousel h2 { font-size: 28px; }',
-      '  .maquinasa-prop-cards { grid-template-columns: 1fr; gap: 18px; }',
+      '  .maquinasa-prop-track { gap: 18px; }',
+      '  .maquinasa-prop-card {',
+      '    min-width: 100%;',
+      '    max-width: 100%;',
+      '  }',
       '  .maquinasa-prop-body { padding: 18px 20px 16px; }',
+      '  .maquinasa-prop-arrow { width: 38px; height: 38px; font-size: 22px; }',
+      '  .maquinasa-prop-slider-wrap { gap: 8px; }',
       '}'
     ].join('\n'));
 
