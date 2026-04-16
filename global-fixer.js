@@ -1510,6 +1510,7 @@
     var cards = destacadas.map(function (p) {
       var img = p.imagenPrincipal || PROP_PLACEHOLDER;
       return [
+        '<div class="maquinasa-prop-slide">',
         '<a href="/inmobiliaria?p=' + encodeURIComponent(p.slug) + '" class="maquinasa-prop-card">',
         '  <img class="maquinasa-prop-img" src="' + img + '" alt="' + escapeHTML(p.nombre) + '">',
         '  <div class="maquinasa-prop-body">',
@@ -1521,7 +1522,8 @@
         '      <span class="maquinasa-prop-cta">Ver detalle \u2192</span>',
         '    </div>',
         '  </div>',
-        '</a>'
+        '</a>',
+        '</div>'
       ].join('');
     }).join('');
 
@@ -1546,7 +1548,7 @@
 
     // --- Wire carousel logic ---
     var track = section.querySelector('.maquinasa-prop-track');
-    var allCards = section.querySelectorAll('.maquinasa-prop-card');
+    var allCards = section.querySelectorAll('.maquinasa-prop-slide');
     var prevBtn = section.querySelector('.maquinasa-prop-arrow-prev');
     var nextBtn = section.querySelector('.maquinasa-prop-arrow-next');
     var dotsWrap = section.querySelector('.maquinasa-prop-dots');
@@ -1677,6 +1679,12 @@
       '}',
       '.maquinasa-prop-dot.active { background: #ffbe40; transform: scale(1.3); }',
       '.maquinasa-prop-dot:hover { background: #204e51; }',
+      // Slide wrapper (transparente en desktop, centrador en mobile)
+      '.maquinasa-prop-slide {',
+      '  flex: 0 0 auto;',
+      '  min-width: calc((100% - 56px) / 3);',
+      '  max-width: calc((100% - 56px) / 3);',
+      '}',
       // Cards
       '.maquinasa-prop-card {',
       '  background: #fff;',
@@ -1688,9 +1696,7 @@
       '  text-decoration: none !important;',
       '  color: inherit;',
       '  display: flex; flex-direction: column;',
-      '  min-width: calc((100% - 56px) / 3);',
-      '  max-width: calc((100% - 56px) / 3);',
-      '  flex: 0 0 auto;',
+      '  width: 100%;',
       '}',
       '.maquinasa-prop-card:hover {',
       '  transform: translateY(-6px);',
@@ -1729,7 +1735,7 @@
       '}',
       '@media (max-width: 991px) {',
       '  .maquinasa-prop-track { gap: 22px; }',
-      '  .maquinasa-prop-card {',
+      '  .maquinasa-prop-slide {',
       '    min-width: calc((100% - 22px) / 2);',
       '    max-width: calc((100% - 22px) / 2);',
       '  }',
@@ -1745,17 +1751,26 @@
       '    margin-bottom: 24px !important;',
       '    line-height: 1.5 !important;',
       '  }',
-      // Ocultar flechas laterales, usuario swipea + dots
+      // Flechas ocultas, navegar con swipe + dots
       '  .maquinasa-prop-arrow { display: none !important; }',
       '  .maquinasa-prop-slider-wrap { gap: 0 !important; }',
-      '  .maquinasa-prop-track { gap: 0 !important; }',
       '  .maquinasa-prop-slider { overflow: hidden !important; }',
-      // Cada card = 100% del slider visible (1 sola card a la vez)
-      '  .maquinasa-prop-card {',
+      '  .maquinasa-prop-track { gap: 0 !important; }',
+      // Cada slot ocupa 100%, card centrada con max-width
+      '  .maquinasa-prop-slide {',
       '    min-width: 100% !important;',
       '    max-width: 100% !important;',
-      '    padding: 0 20px !important;',
+      '    flex: 0 0 100% !important;',
+      '    display: flex !important;',
+      '    justify-content: center !important;',
+      '    padding: 8px 24px !important;',
       '    box-sizing: border-box !important;',
+      '  }',
+      '  .maquinasa-prop-card {',
+      '    min-width: 0 !important;',
+      '    max-width: 300px !important;',
+      '    width: 100% !important;',
+      '    flex: 0 1 300px !important;',
       '  }',
       '}'
     ].join('\n'));
