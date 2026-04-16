@@ -1745,7 +1745,6 @@
       '    <aside class="maquinasa-prop-info">',
       '      <div class="maquinasa-prop-precio-box">',
       '        <span class="maquinasa-prop-precio-label">Precio</span>',
-      '        <strong class="maquinasa-prop-precio-val">' + escapeHTML(prop.precio) + '</strong>',
       '        <a href="' + mailtoPrecio + '" class="maquinasa-prop-btn-precio">Consultar precio</a>',
       '      </div>',
       '      <div class="maquinasa-prop-meta">',
