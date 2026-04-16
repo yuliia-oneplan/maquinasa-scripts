@@ -1742,7 +1742,10 @@
       '    min-width: 100%;',
       '    max-width: 100%;',
       '  }',
-      '  .maquinasa-prop-body { padding: 18px 20px 16px; }',
+      '  .maquinasa-prop-img { aspect-ratio: 16 / 9; }',
+      '  .maquinasa-prop-body { padding: 16px 18px 14px; }',
+      '  .maquinasa-prop-body h3 { font-size: 16px; }',
+      '  .maquinasa-prop-desc { font-size: 13px; margin-bottom: 14px; }',
       '  .maquinasa-prop-arrow { width: 38px; height: 38px; font-size: 22px; }',
       '  .maquinasa-prop-slider-wrap { gap: 8px; }',
       '}'
